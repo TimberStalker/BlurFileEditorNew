@@ -17,7 +17,7 @@ namespace Editor
     {
         [AllowNull]
         static SynchronizationContext synchronizationContext;
-        static WindowManager windows = new();
+        static GuiWindowManager windows = new();
 
         public static void ExecuteOnMainThread(Action action) => ExecuteOnMainThread(_ => action(), null);
         public static void ExecuteOnMainThread<T1, T2>(Action<T1, T2> action, T1 state1, T2 state2)
@@ -85,7 +85,7 @@ namespace Editor
                     Console.WriteLine(file);
                     if(Path.GetExtension(file) == ".bin" || Path.GetExtension(file) == ".xt")
                     {
-                        windows.AddWindow(new XtEditorWindow(file));
+                        windows.AddWindow(new XtEditorWindow(windows, file));
                     }
                 }
                 if (FileDialogue.OpenFile("createProjectOpen", out string directory, "*.exe"))

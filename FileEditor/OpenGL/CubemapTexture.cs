@@ -46,7 +46,7 @@ public class CubemapTexture : IDisposable
     {
         if (bitmaps.Length != 6) throw new NotSupportedException();
         var texture = new CubemapTexture();
-
+        GL.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, texture);
         texture.SetParameter(GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
         texture.SetParameter(GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
         texture.SetParameter(GL.GL_TEXTURE_WRAP_R, GL.GL_CLAMP_TO_EDGE);

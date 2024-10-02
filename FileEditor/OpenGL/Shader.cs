@@ -26,17 +26,17 @@ public class Shader
     {         
         glUniform1i(glGetUniformLocation(handle, name), value ? 1 : 0);
     }
-    public void SetInt(string name, int value) 
+    public void SetInt(string name, in int value) 
     { 
         glUniform1i(glGetUniformLocation(handle, name), value); 
     }
-    public void SetFloat(string name, float value)
+    public void SetFloat(string name, in float value)
     { 
         glUniform1f(glGetUniformLocation(handle, name), value); 
     }
-    public void SetMatrix(string name, Matrix4x4 value)
+    public void SetMatrix(string name, in Matrix4x4 value)
     {
-        glUniformMatrix4fv(glGetUniformLocation(handle, name), 1, true, value.M11);
+        glUniformMatrix4fv(glGetUniformLocation(handle, name), 1, false, value.M11);
     }
 
     public static implicit operator uint(Shader texture)
@@ -51,7 +51,8 @@ public class Shader
     public static Shader Create(string path)
     {
         var vertex = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertex, 1, File.ReadAllLines(Path.ChangeExtension(path, ".vert")), 0);
+        var vertSource = File.ReadAllText(Path.ChangeExtension(path, ".vert"));
+        glShaderSource(vertex, 1, [vertSource], vertSource.Length);
         glCompileShader(vertex);
         int success;
         glGetShaderiv(vertex, GL_COMPILE_STATUS, out success);
@@ -62,7 +63,8 @@ public class Shader
         };
 
         var fragment = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragment, 1, File.ReadAllLines(Path.ChangeExtension(path, ".frag")), 0);
+        var fragSource = File.ReadAllText(Path.ChangeExtension(path, ".frag"));
+        glShaderSource(fragment, 1, [fragSource], fragSource.Length);
         glCompileShader(fragment);
         glGetShaderiv(fragment, GL_COMPILE_STATUS, out success);
         if (success == 0)

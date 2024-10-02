@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using static Editor.Rendering.GL;
+using static Editor.Rendering.GLFW;
 using Exception = System.Exception;
 
 namespace Editor.Rendering {
@@ -49,9 +50,9 @@ namespace Editor.Rendering {
         /// </summary>
         public IntPtr GLFWWindow { get; private set; } = default;
         
-        /// <inheritdoc cref="onPreUpdate"/>
         public event Action OnDraw { add { onDraw += value; } remove { onDraw -= value; } }
 
+        /// <inheritdoc cref="onPreUpdate"/>
         public event Action OnPreUpdate { add { onPreUpdate += value; } remove { onPreUpdate -= value; } }
         /// <inheritdoc cref="onUpdate"/>
         public event Action OnUpdate { add { onUpdate += value; } remove { onUpdate -= value; } }
@@ -78,21 +79,22 @@ namespace Editor.Rendering {
         /// Launch the loop maintaining the <see cref="GLFWWindow"/> previously created.
         /// </summary>
         public void Loop() {
-            while (GLFW.glfwWindowShouldClose(GLFWWindow) == GL_FALSE) {
-                onDraw?.Invoke();
+            while (glfwWindowShouldClose(GLFWWindow) == GL_FALSE) {
 
-                GLFW.glfwPollEvents();
+                onDraw?.Invoke();
+                glfwPollEvents();
                 onPreUpdate?.Invoke();
                 
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
                 
                 onUpdate?.Invoke();
                 onPostUpdate?.Invoke();
-                
-                GLFW.glfwSwapBuffers(GLFWWindow);
+
+
+                glfwSwapBuffers(GLFWWindow);
             }
             
-            GLFW.glfwTerminate();
+            glfwTerminate();
         }
 
         /// <summary>
@@ -103,7 +105,7 @@ namespace Editor.Rendering {
         {
             get
             {
-                GLFW.glfwGetWindowSize(GLFWWindow, out int _width, out int _height);
+                glfwGetWindowSize(GLFWWindow, out int _width, out int _height);
                 return new Vector2(_width, _height);
             }
         }
@@ -137,13 +139,13 @@ namespace Editor.Rendering {
             //For now, ImGui manage these events on its own, so there's maybe no purpose 
             //of catching these callbacks here afterall...
             
-            GLFW.glfwMakeContextCurrent(GLFWWindow);
+            glfwMakeContextCurrent(GLFWWindow);
             GL.LoadEntryPoints();
             
-            GLFW.glfwSwapInterval(Convert.ToInt32(CreationProps.SwapInterval));
+            glfwSwapInterval(Convert.ToInt32(CreationProps.SwapInterval));
             
             //Make the GLFWWindow visible
-            GLFW.glfwShowWindow(GLFWWindow);
+            glfwShowWindow(GLFWWindow);
             
             //Enable to Alpha Blend
             glEnable(GL_BLEND);

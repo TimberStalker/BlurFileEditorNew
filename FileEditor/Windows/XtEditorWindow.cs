@@ -1,32 +1,33 @@
 ﻿using System.Numerics;
 using System.Text;
+using System.Xml.Linq;
 using BlurFileFormats.XtFlask;
 using BlurFileFormats.XtFlask.Values;
+using Editor;
 using Editor.Drawers;
+using Editor.Windows;
 using ImGuiNET;
 
-public class XtEditorWindow : IWindow
+public class XtEditorWindow : GuiWindow
 {
     XtDb XtDb { get; }
+    public GuiWindowManager Manager { get; }
     string File { get; }
     string Name { get; }
-    public XtEditorWindow(string path)
+    public XtEditorWindow(GuiWindowManager manager, string path)
     {
         XtDb = Flask.Import(path);
+        Manager = manager;
         File = path;
         Name = Path.GetFileName(path);
     }
     public bool Draw()
     {
-        return DrawXtEditorWindow(XtDb, File, Name);
-    }
-    static bool DrawXtEditorWindow(XtDb xtDb, string file, string name)
-    {
         bool open = true;
-        if (ImGui.Begin($"{name}##{file}", ref open, ImGuiWindowFlags.NoCollapse))
+        if (ImGui.Begin($"{Name}##{File}", ref open, ImGuiWindowFlags.NoCollapse))
         {
             ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(5, 5));
-            foreach (var item in xtDb.References)
+            foreach (var item in XtDb.References)
             {
                 var value = item.Value;
                 if (value == XtNullValue.Instance)
@@ -41,11 +42,19 @@ public class XtEditorWindow : IWindow
                 else
                 {
                     bool showContent = (ImGui.TreeNodeEx(item.Id.ToString(), ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap));
+                    if (ImGui.BeginPopupContextItem($"recordContext{item.Id}"))
+                    {
+                        if(ImGui.MenuItem("View Ref As Node Graph"))
+                        {
+                            Manager.AddWindow(new XtRefGraph((XtRef)item));
+                        }
+                        ImGui.EndPopup();
+                    }
                     ImGui.SameLine();
                     ImGui.Text(item.Type.Name);
                     if (showContent)
                     {
-                        ShowXtValue(xtDb, value);
+                        ShowXtValue(XtDb, value);
                         ImGui.TreePop();
                     }
                 }

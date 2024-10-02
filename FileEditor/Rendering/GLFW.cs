@@ -360,7 +360,7 @@ namespace Editor.Rendering
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void** glfwGetMonitorsDelegate(out int count);
-        private static glfwGetMonitorsDelegate _glfwGetMonitors = NativeFuncExecuter.LoadFunction<glfwGetMonitorsDelegate>(NativeLibrary, "glfwGetMonitors");
+        private static glfwGetMonitorsDelegate _glfwGetMonitors = NativeFuncExecuter.LoadFunction<glfwGetMonitorsDelegate>(NativeLibrary, nameof(glfwGetMonitors));
         public static IntPtr[] glfwGetMonitors(out int count)
         {
             var monitors = _glfwGetMonitors(out count);
@@ -372,577 +372,577 @@ namespace Editor.Rendering
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr glfwGetVideoModeDelegate(IntPtr monitor);
-        private static glfwGetVideoModeDelegate _glfwGetVideoMode = NativeFuncExecuter.LoadFunction<glfwGetVideoModeDelegate>(NativeLibrary, "glfwGetVideoMode");
+        private static glfwGetVideoModeDelegate _glfwGetVideoMode = NativeFuncExecuter.LoadFunction<glfwGetVideoModeDelegate>(NativeLibrary, nameof(glfwGetVideoMode));
         public static GLFWvidmode glfwGetVideoMode(IntPtr monitor) => Marshal.PtrToStructure<GLFWvidmode>(_glfwGetVideoMode(monitor));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int glfwInitDelegate();
-        private static glfwInitDelegate _glfwInit = NativeFuncExecuter.LoadFunction<glfwInitDelegate>(NativeLibrary, "glfwInit");
+        private static glfwInitDelegate _glfwInit = NativeFuncExecuter.LoadFunction<glfwInitDelegate>(NativeLibrary, nameof(glfwInit));
         public static int glfwInit() => _glfwInit();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwTerminateDelegate();
-        private static glfwTerminateDelegate _glfwTerminate = NativeFuncExecuter.LoadFunction<glfwTerminateDelegate>(NativeLibrary, "glfwTerminate");
+        private static glfwTerminateDelegate _glfwTerminate = NativeFuncExecuter.LoadFunction<glfwTerminateDelegate>(NativeLibrary, nameof(glfwTerminate));
         public static void glfwTerminate() => _glfwTerminate();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwInitHintDelegate(int hint, int value);
-        private static glfwInitHintDelegate _glfwInitHint = NativeFuncExecuter.LoadFunction<glfwInitHintDelegate>(NativeLibrary, "glfwInitHint");
+        private static glfwInitHintDelegate _glfwInitHint = NativeFuncExecuter.LoadFunction<glfwInitHintDelegate>(NativeLibrary, nameof(glfwInitHint));
         public static void glfwInitHint(int hint, int value) => _glfwInitHint(hint, value);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwGetVersionDelegate(out int major, out int minor, out int rev);
-        private static glfwGetVersionDelegate _glfwGetVersion = NativeFuncExecuter.LoadFunction<glfwGetVersionDelegate>(NativeLibrary, "glfwGetVersion");
+        private static glfwGetVersionDelegate _glfwGetVersion = NativeFuncExecuter.LoadFunction<glfwGetVersionDelegate>(NativeLibrary, nameof(glfwGetVersion));
         public static void glfwGetVersion(out int major, out int minor, out int rev) => _glfwGetVersion(out major, out minor, out rev);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate string glfwGetVersionStringDelegate();
-        private static glfwGetVersionStringDelegate _glfwGetVersionString = NativeFuncExecuter.LoadFunction<glfwGetVersionStringDelegate>(NativeLibrary, "glfwGetVersionString");
+        private static glfwGetVersionStringDelegate _glfwGetVersionString = NativeFuncExecuter.LoadFunction<glfwGetVersionStringDelegate>(NativeLibrary, nameof(glfwGetVersionString));
         public static string glfwGetVersionString() => _glfwGetVersionString();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int glfwGetErrorDelegate(out string description);
-        private static glfwGetErrorDelegate _glfwGetError = NativeFuncExecuter.LoadFunction<glfwGetErrorDelegate>(NativeLibrary, "glfwGetError");
+        private static glfwGetErrorDelegate _glfwGetError = NativeFuncExecuter.LoadFunction<glfwGetErrorDelegate>(NativeLibrary, nameof(glfwGetError));
         public static int glfwGetError(out string description) => _glfwGetError(out description);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWerrorfun glfwSetErrorCallbackDelegate(GLFWerrorfun callback);
-        private static glfwSetErrorCallbackDelegate _glfwSetErrorCallback = NativeFuncExecuter.LoadFunction<glfwSetErrorCallbackDelegate>(NativeLibrary, "glfwSetErrorCallback");
+        private static glfwSetErrorCallbackDelegate _glfwSetErrorCallback = NativeFuncExecuter.LoadFunction<glfwSetErrorCallbackDelegate>(NativeLibrary, nameof(glfwSetErrorCallback));
         public static GLFWerrorfun glfwSetErrorCallback(GLFWerrorfun callback) => _glfwSetErrorCallback(callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr glfwGetPrimaryMonitorDelegate();
-        private static glfwGetPrimaryMonitorDelegate _glfwGetPrimaryMonitor = NativeFuncExecuter.LoadFunction<glfwGetPrimaryMonitorDelegate>(NativeLibrary, "glfwGetPrimaryMonitor");
+        private static glfwGetPrimaryMonitorDelegate _glfwGetPrimaryMonitor = NativeFuncExecuter.LoadFunction<glfwGetPrimaryMonitorDelegate>(NativeLibrary, nameof(glfwGetPrimaryMonitor));
         public static IntPtr glfwGetPrimaryMonitor() => _glfwGetPrimaryMonitor();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwGetMonitorPosDelegate(IntPtr monitor, out int xpos, out int ypos);
-        private static glfwGetMonitorPosDelegate _glfwGetMonitorPos = NativeFuncExecuter.LoadFunction<glfwGetMonitorPosDelegate>(NativeLibrary, "glfwGetMonitorPos");
+        private static glfwGetMonitorPosDelegate _glfwGetMonitorPos = NativeFuncExecuter.LoadFunction<glfwGetMonitorPosDelegate>(NativeLibrary, nameof(glfwGetMonitorPos));
         public static void glfwGetMonitorPos(IntPtr monitor, out int xpos, out int ypos) => _glfwGetMonitorPos(monitor, out xpos, out ypos);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwGetMonitorWorkareaDelegate(IntPtr monitor, out int xpos, out int ypos, out int width, out int height);
-        private static glfwGetMonitorWorkareaDelegate _glfwGetMonitorWorkarea = NativeFuncExecuter.LoadFunction<glfwGetMonitorWorkareaDelegate>(NativeLibrary, "glfwGetMonitorWorkarea");
+        private static glfwGetMonitorWorkareaDelegate _glfwGetMonitorWorkarea = NativeFuncExecuter.LoadFunction<glfwGetMonitorWorkareaDelegate>(NativeLibrary, nameof(glfwGetMonitorWorkarea));
         public static void glfwGetMonitorWorkarea(IntPtr monitor, out int xpos, out int ypos, out int width, out int height) => _glfwGetMonitorWorkarea(monitor, out xpos, out ypos, out width, out height);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwGetMonitorPhysicalSizeDelegate(IntPtr monitor, out int widthMM, out int heightMM);
-        private static glfwGetMonitorPhysicalSizeDelegate _glfwGetMonitorPhysicalSize = NativeFuncExecuter.LoadFunction<glfwGetMonitorPhysicalSizeDelegate>(NativeLibrary, "glfwGetMonitorPhysicalSize");
+        private static glfwGetMonitorPhysicalSizeDelegate _glfwGetMonitorPhysicalSize = NativeFuncExecuter.LoadFunction<glfwGetMonitorPhysicalSizeDelegate>(NativeLibrary, nameof(glfwGetMonitorPhysicalSize));
         public static void glfwGetMonitorPhysicalSize(IntPtr monitor, out int widthMM, out int heightMM) => _glfwGetMonitorPhysicalSize(monitor, out widthMM, out heightMM);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwGetMonitorContentScaleDelegate(IntPtr monitor, out float xscale, out float yscale);
-        private static glfwGetMonitorContentScaleDelegate _glfwGetMonitorContentScale = NativeFuncExecuter.LoadFunction<glfwGetMonitorContentScaleDelegate>(NativeLibrary, "glfwGetMonitorContentScale");
+        private static glfwGetMonitorContentScaleDelegate _glfwGetMonitorContentScale = NativeFuncExecuter.LoadFunction<glfwGetMonitorContentScaleDelegate>(NativeLibrary, nameof(glfwGetMonitorContentScale));
         public static void glfwGetMonitorContentScale(IntPtr monitor, out float xscale, out float yscale) => _glfwGetMonitorContentScale(monitor, out xscale, out yscale);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate string glfwGetMonitorNameDelegate(IntPtr monitor);
-        private static glfwGetMonitorNameDelegate _glfwGetMonitorName = NativeFuncExecuter.LoadFunction<glfwGetMonitorNameDelegate>(NativeLibrary, "glfwGetMonitorName");
+        private static glfwGetMonitorNameDelegate _glfwGetMonitorName = NativeFuncExecuter.LoadFunction<glfwGetMonitorNameDelegate>(NativeLibrary, nameof(glfwGetMonitorName));
         public static string glfwGetMonitorName(IntPtr monitor) => _glfwGetMonitorName(monitor);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetMonitorUserPointerDelegate(IntPtr monitor, IntPtr pointer);
-        private static glfwSetMonitorUserPointerDelegate _glfwSetMonitorUserPointer = NativeFuncExecuter.LoadFunction<glfwSetMonitorUserPointerDelegate>(NativeLibrary, "glfwSetMonitorUserPointer");
+        private static glfwSetMonitorUserPointerDelegate _glfwSetMonitorUserPointer = NativeFuncExecuter.LoadFunction<glfwSetMonitorUserPointerDelegate>(NativeLibrary, nameof(glfwSetMonitorUserPointer));
         public static void glfwSetMonitorUserPointer(IntPtr monitor, IntPtr pointer) => _glfwSetMonitorUserPointer(monitor, pointer);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr glfwGetMonitorUserPointerDelegate(IntPtr monitor);
-        private static glfwGetMonitorUserPointerDelegate _glfwGetMonitorUserPointer = NativeFuncExecuter.LoadFunction<glfwGetMonitorUserPointerDelegate>(NativeLibrary, "glfwGetMonitorUserPointer");
+        private static glfwGetMonitorUserPointerDelegate _glfwGetMonitorUserPointer = NativeFuncExecuter.LoadFunction<glfwGetMonitorUserPointerDelegate>(NativeLibrary, nameof(glfwGetMonitorUserPointer));
         public static IntPtr glfwGetMonitorUserPointer(IntPtr monitor) => _glfwGetMonitorUserPointer(monitor);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWmonitorfun glfwSetMonitorCallbackDelegate(GLFWmonitorfun callback);
-        private static glfwSetMonitorCallbackDelegate _glfwSetMonitorCallback = NativeFuncExecuter.LoadFunction<glfwSetMonitorCallbackDelegate>(NativeLibrary, "glfwSetMonitorCallback");
+        private static glfwSetMonitorCallbackDelegate _glfwSetMonitorCallback = NativeFuncExecuter.LoadFunction<glfwSetMonitorCallbackDelegate>(NativeLibrary, nameof(glfwSetMonitorCallback));
         public static GLFWmonitorfun glfwSetMonitorCallback(GLFWmonitorfun callback) => _glfwSetMonitorCallback(callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr glfwGetVideoModesDelegate(IntPtr monitor, out int count);
-        private static glfwGetVideoModesDelegate _glfwGetVideoModes = NativeFuncExecuter.LoadFunction<glfwGetVideoModesDelegate>(NativeLibrary, "glfwGetVideoModes");
+        private static glfwGetVideoModesDelegate _glfwGetVideoModes = NativeFuncExecuter.LoadFunction<glfwGetVideoModesDelegate>(NativeLibrary, nameof(glfwGetVideoModes));
         public static IntPtr glfwGetVideoModes(IntPtr monitor, out int count) => _glfwGetVideoModes(monitor, out count);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetGammaDelegate(IntPtr monitor, float gamma);
-        private static glfwSetGammaDelegate _glfwSetGamma = NativeFuncExecuter.LoadFunction<glfwSetGammaDelegate>(NativeLibrary, "glfwSetGamma");
+        private static glfwSetGammaDelegate _glfwSetGamma = NativeFuncExecuter.LoadFunction<glfwSetGammaDelegate>(NativeLibrary, nameof(glfwSetGamma));
         public static void glfwSetGamma(IntPtr monitor, float gamma) => _glfwSetGamma(monitor, gamma);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr glfwGetGammaRampDelegate(IntPtr monitor);
-        private static glfwGetGammaRampDelegate _glfwGetGammaRamp = NativeFuncExecuter.LoadFunction<glfwGetGammaRampDelegate>(NativeLibrary, "glfwGetGammaRamp");
+        private static glfwGetGammaRampDelegate _glfwGetGammaRamp = NativeFuncExecuter.LoadFunction<glfwGetGammaRampDelegate>(NativeLibrary, nameof(glfwGetGammaRamp));
         public static IntPtr glfwGetGammaRamp(IntPtr monitor) => _glfwGetGammaRamp(monitor);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetGammaRampDelegate(IntPtr monitor, IntPtr ramp);
-        private static glfwSetGammaRampDelegate _glfwSetGammaRamp = NativeFuncExecuter.LoadFunction<glfwSetGammaRampDelegate>(NativeLibrary, "glfwSetGammaRamp");
+        private static glfwSetGammaRampDelegate _glfwSetGammaRamp = NativeFuncExecuter.LoadFunction<glfwSetGammaRampDelegate>(NativeLibrary, nameof(glfwSetGammaRamp));
         public static void glfwSetGammaRamp(IntPtr monitor, IntPtr ramp) => _glfwSetGammaRamp(monitor, ramp);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwDefaultWindowHintsDelegate();
-        private static glfwDefaultWindowHintsDelegate _glfwDefaultWindowHints = NativeFuncExecuter.LoadFunction<glfwDefaultWindowHintsDelegate>(NativeLibrary, "glfwDefaultWindowHints");
+        private static glfwDefaultWindowHintsDelegate _glfwDefaultWindowHints = NativeFuncExecuter.LoadFunction<glfwDefaultWindowHintsDelegate>(NativeLibrary, nameof(glfwDefaultWindowHints));
         public static void glfwDefaultWindowHints() => _glfwDefaultWindowHints();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwWindowHintDelegate(int hint, int value);
-        private static glfwWindowHintDelegate _glfwWindowHint = NativeFuncExecuter.LoadFunction<glfwWindowHintDelegate>(NativeLibrary, "glfwWindowHint");
+        private static glfwWindowHintDelegate _glfwWindowHint = NativeFuncExecuter.LoadFunction<glfwWindowHintDelegate>(NativeLibrary, nameof(glfwWindowHint));
         public static void glfwWindowHint(int hint, int value) => _glfwWindowHint(hint, value);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwWindowHintStringDelegate(int hint, string value);
-        private static glfwWindowHintStringDelegate _glfwWindowHintString = NativeFuncExecuter.LoadFunction<glfwWindowHintStringDelegate>(NativeLibrary, "glfwWindowHintString");
+        private static glfwWindowHintStringDelegate _glfwWindowHintString = NativeFuncExecuter.LoadFunction<glfwWindowHintStringDelegate>(NativeLibrary, nameof(glfwWindowHintString));
         public static void glfwWindowHintString(int hint, string value) => _glfwWindowHintString(hint, value);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr glfwCreateWindowDelegate(int width, int height, string title, IntPtr monitor, IntPtr share);
-        private static glfwCreateWindowDelegate _glfwCreateWindow = NativeFuncExecuter.LoadFunction<glfwCreateWindowDelegate>(NativeLibrary, "glfwCreateWindow");
+        private static glfwCreateWindowDelegate _glfwCreateWindow = NativeFuncExecuter.LoadFunction<glfwCreateWindowDelegate>(NativeLibrary, nameof(glfwCreateWindow));
         public static IntPtr glfwCreateWindow(int width, int height, string title, IntPtr monitor, IntPtr share) => _glfwCreateWindow(width, height, title, monitor, share);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwDestroyWindowDelegate(IntPtr window);
-        private static glfwDestroyWindowDelegate _glfwDestroyWindow = NativeFuncExecuter.LoadFunction<glfwDestroyWindowDelegate>(NativeLibrary, "glfwDestroyWindow");
+        private static glfwDestroyWindowDelegate _glfwDestroyWindow = NativeFuncExecuter.LoadFunction<glfwDestroyWindowDelegate>(NativeLibrary, nameof(glfwDestroyWindow));
         public static void glfwDestroyWindow(IntPtr window) => _glfwDestroyWindow(window);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int glfwWindowShouldCloseDelegate(IntPtr window);
-        private static glfwWindowShouldCloseDelegate _glfwWindowShouldClose = NativeFuncExecuter.LoadFunction<glfwWindowShouldCloseDelegate>(NativeLibrary, "glfwWindowShouldClose");
+        private static glfwWindowShouldCloseDelegate _glfwWindowShouldClose = NativeFuncExecuter.LoadFunction<glfwWindowShouldCloseDelegate>(NativeLibrary, nameof(glfwWindowShouldClose));
         public static int glfwWindowShouldClose(IntPtr window) => _glfwWindowShouldClose(window);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetWindowShouldCloseDelegate(IntPtr window, int value);
-        private static glfwSetWindowShouldCloseDelegate _glfwSetWindowShouldClose = NativeFuncExecuter.LoadFunction<glfwSetWindowShouldCloseDelegate>(NativeLibrary, "glfwSetWindowShouldClose");
+        private static glfwSetWindowShouldCloseDelegate _glfwSetWindowShouldClose = NativeFuncExecuter.LoadFunction<glfwSetWindowShouldCloseDelegate>(NativeLibrary, nameof(glfwSetWindowShouldClose));
         public static void glfwSetWindowShouldClose(IntPtr window, int value) => _glfwSetWindowShouldClose(window, value);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetWindowTitleDelegate(IntPtr window, string title);
-        private static glfwSetWindowTitleDelegate _glfwSetWindowTitle = NativeFuncExecuter.LoadFunction<glfwSetWindowTitleDelegate>(NativeLibrary, "glfwSetWindowTitle");
+        private static glfwSetWindowTitleDelegate _glfwSetWindowTitle = NativeFuncExecuter.LoadFunction<glfwSetWindowTitleDelegate>(NativeLibrary, nameof(glfwSetWindowTitle));
         public static void glfwSetWindowTitle(IntPtr window, string title) => _glfwSetWindowTitle(window, title);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetWindowIconDelegate(IntPtr window, int count, IntPtr images);
-        private static glfwSetWindowIconDelegate _glfwSetWindowIcon = NativeFuncExecuter.LoadFunction<glfwSetWindowIconDelegate>(NativeLibrary, "glfwSetWindowIcon");
+        private static glfwSetWindowIconDelegate _glfwSetWindowIcon = NativeFuncExecuter.LoadFunction<glfwSetWindowIconDelegate>(NativeLibrary, nameof(glfwSetWindowIcon));
         public static void glfwSetWindowIcon(IntPtr window, int count, IntPtr images) => _glfwSetWindowIcon(window, count, images);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwGetWindowPosDelegate(IntPtr window, out int xpos, out int ypos);
-        private static glfwGetWindowPosDelegate _glfwGetWindowPos = NativeFuncExecuter.LoadFunction<glfwGetWindowPosDelegate>(NativeLibrary, "glfwGetWindowPos");
+        private static glfwGetWindowPosDelegate _glfwGetWindowPos = NativeFuncExecuter.LoadFunction<glfwGetWindowPosDelegate>(NativeLibrary, nameof(glfwGetWindowPos));
         public static void glfwGetWindowPos(IntPtr window, out int xpos, out int ypos) => _glfwGetWindowPos(window, out xpos, out ypos);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetWindowPosDelegate(IntPtr window, int xpos, int ypos);
-        private static glfwSetWindowPosDelegate _glfwSetWindowPos = NativeFuncExecuter.LoadFunction<glfwSetWindowPosDelegate>(NativeLibrary, "glfwSetWindowPos");
+        private static glfwSetWindowPosDelegate _glfwSetWindowPos = NativeFuncExecuter.LoadFunction<glfwSetWindowPosDelegate>(NativeLibrary, nameof(glfwSetWindowPos));
         public static void glfwSetWindowPos(IntPtr window, int xpos, int ypos) => _glfwSetWindowPos(window, xpos, ypos);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwGetWindowSizeDelegate(IntPtr window, out int width, out int height);
-        private static glfwGetWindowSizeDelegate _glfwGetWindowSize = NativeFuncExecuter.LoadFunction<glfwGetWindowSizeDelegate>(NativeLibrary, "glfwGetWindowSize");
+        private static glfwGetWindowSizeDelegate _glfwGetWindowSize = NativeFuncExecuter.LoadFunction<glfwGetWindowSizeDelegate>(NativeLibrary, nameof(glfwGetWindowSize));
         public static void glfwGetWindowSize(IntPtr window, out int width, out int height) => _glfwGetWindowSize(window, out width, out height);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetWindowSizeLimitsDelegate(IntPtr window, int minwidth, int minheight, int maxwidth, int maxheight);
-        private static glfwSetWindowSizeLimitsDelegate _glfwSetWindowSizeLimits = NativeFuncExecuter.LoadFunction<glfwSetWindowSizeLimitsDelegate>(NativeLibrary, "glfwSetWindowSizeLimits");
+        private static glfwSetWindowSizeLimitsDelegate _glfwSetWindowSizeLimits = NativeFuncExecuter.LoadFunction<glfwSetWindowSizeLimitsDelegate>(NativeLibrary, nameof(glfwSetWindowSizeLimits));
         public static void glfwSetWindowSizeLimits(IntPtr window, int minwidth, int minheight, int maxwidth, int maxheight) => _glfwSetWindowSizeLimits(window, minwidth, minheight, maxwidth, maxheight);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetWindowAspectRatioDelegate(IntPtr window, int numer, int denom);
-        private static glfwSetWindowAspectRatioDelegate _glfwSetWindowAspectRatio = NativeFuncExecuter.LoadFunction<glfwSetWindowAspectRatioDelegate>(NativeLibrary, "glfwSetWindowAspectRatio");
+        private static glfwSetWindowAspectRatioDelegate _glfwSetWindowAspectRatio = NativeFuncExecuter.LoadFunction<glfwSetWindowAspectRatioDelegate>(NativeLibrary, nameof(glfwSetWindowAspectRatio));
         public static void glfwSetWindowAspectRatio(IntPtr window, int numer, int denom) => _glfwSetWindowAspectRatio(window, numer, denom);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetWindowSizeDelegate(IntPtr window, int width, int height);
-        private static glfwSetWindowSizeDelegate _glfwSetWindowSize = NativeFuncExecuter.LoadFunction<glfwSetWindowSizeDelegate>(NativeLibrary, "glfwSetWindowSize");
+        private static glfwSetWindowSizeDelegate _glfwSetWindowSize = NativeFuncExecuter.LoadFunction<glfwSetWindowSizeDelegate>(NativeLibrary, nameof(glfwSetWindowSize));
         public static void glfwSetWindowSize(IntPtr window, int width, int height) => _glfwSetWindowSize(window, width, height);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwGetFramebufferSizeDelegate(IntPtr window, out int width, out int height);
-        private static glfwGetFramebufferSizeDelegate _glfwGetFramebufferSize = NativeFuncExecuter.LoadFunction<glfwGetFramebufferSizeDelegate>(NativeLibrary, "glfwGetFramebufferSize");
+        private static glfwGetFramebufferSizeDelegate _glfwGetFramebufferSize = NativeFuncExecuter.LoadFunction<glfwGetFramebufferSizeDelegate>(NativeLibrary, nameof(glfwGetFramebufferSize));
         public static void glfwGetFramebufferSize(IntPtr window, out int width, out int height) => _glfwGetFramebufferSize(window, out width, out height);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwGetWindowFrameSizeDelegate(IntPtr window, out int left, out int top, out int right, out int bottom);
-        private static glfwGetWindowFrameSizeDelegate _glfwGetWindowFrameSize = NativeFuncExecuter.LoadFunction<glfwGetWindowFrameSizeDelegate>(NativeLibrary, "glfwGetWindowFrameSize");
+        private static glfwGetWindowFrameSizeDelegate _glfwGetWindowFrameSize = NativeFuncExecuter.LoadFunction<glfwGetWindowFrameSizeDelegate>(NativeLibrary, nameof(glfwGetWindowFrameSize));
         public static void glfwGetWindowFrameSize(IntPtr window, out int left, out int top, out int right, out int bottom) => _glfwGetWindowFrameSize(window, out left, out top, out right, out bottom);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwGetWindowContentScaleDelegate(IntPtr window, out float xscale, out float yscale);
-        private static glfwGetWindowContentScaleDelegate _glfwGetWindowContentScale = NativeFuncExecuter.LoadFunction<glfwGetWindowContentScaleDelegate>(NativeLibrary, "glfwGetWindowContentScale");
+        private static glfwGetWindowContentScaleDelegate _glfwGetWindowContentScale = NativeFuncExecuter.LoadFunction<glfwGetWindowContentScaleDelegate>(NativeLibrary, nameof(glfwGetWindowContentScale));
         public static void glfwGetWindowContentScale(IntPtr window, out float xscale, out float yscale) => _glfwGetWindowContentScale(window, out xscale, out yscale);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate float glfwGetWindowOpacityDelegate(IntPtr window);
-        private static glfwGetWindowOpacityDelegate _glfwGetWindowOpacity = NativeFuncExecuter.LoadFunction<glfwGetWindowOpacityDelegate>(NativeLibrary, "glfwGetWindowOpacity");
+        private static glfwGetWindowOpacityDelegate _glfwGetWindowOpacity = NativeFuncExecuter.LoadFunction<glfwGetWindowOpacityDelegate>(NativeLibrary, nameof(glfwGetWindowOpacity));
         public static float glfwGetWindowOpacity(IntPtr window) => _glfwGetWindowOpacity(window);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetWindowOpacityDelegate(IntPtr window, float opacity);
-        private static glfwSetWindowOpacityDelegate _glfwSetWindowOpacity = NativeFuncExecuter.LoadFunction<glfwSetWindowOpacityDelegate>(NativeLibrary, "glfwSetWindowOpacity");
+        private static glfwSetWindowOpacityDelegate _glfwSetWindowOpacity = NativeFuncExecuter.LoadFunction<glfwSetWindowOpacityDelegate>(NativeLibrary, nameof(glfwSetWindowOpacity));
         public static void glfwSetWindowOpacity(IntPtr window, float opacity) => _glfwSetWindowOpacity(window, opacity);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwIconifyWindowDelegate(IntPtr window);
-        private static glfwIconifyWindowDelegate _glfwIconifyWindow = NativeFuncExecuter.LoadFunction<glfwIconifyWindowDelegate>(NativeLibrary, "glfwIconifyWindow");
+        private static glfwIconifyWindowDelegate _glfwIconifyWindow = NativeFuncExecuter.LoadFunction<glfwIconifyWindowDelegate>(NativeLibrary, nameof(glfwIconifyWindow));
         public static void glfwIconifyWindow(IntPtr window) => _glfwIconifyWindow(window);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwRestoreWindowDelegate(IntPtr window);
-        private static glfwRestoreWindowDelegate _glfwRestoreWindow = NativeFuncExecuter.LoadFunction<glfwRestoreWindowDelegate>(NativeLibrary, "glfwRestoreWindow");
+        private static glfwRestoreWindowDelegate _glfwRestoreWindow = NativeFuncExecuter.LoadFunction<glfwRestoreWindowDelegate>(NativeLibrary, nameof(glfwRestoreWindow));
         public static void glfwRestoreWindow(IntPtr window) => _glfwRestoreWindow(window);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwMaximizeWindowDelegate(IntPtr window);
-        private static glfwMaximizeWindowDelegate _glfwMaximizeWindow = NativeFuncExecuter.LoadFunction<glfwMaximizeWindowDelegate>(NativeLibrary, "glfwMaximizeWindow");
+        private static glfwMaximizeWindowDelegate _glfwMaximizeWindow = NativeFuncExecuter.LoadFunction<glfwMaximizeWindowDelegate>(NativeLibrary, nameof(glfwMaximizeWindow));
         public static void glfwMaximizeWindow(IntPtr window) => _glfwMaximizeWindow(window);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwShowWindowDelegate(IntPtr window);
-        private static glfwShowWindowDelegate _glfwShowWindow = NativeFuncExecuter.LoadFunction<glfwShowWindowDelegate>(NativeLibrary, "glfwShowWindow");
+        private static glfwShowWindowDelegate _glfwShowWindow = NativeFuncExecuter.LoadFunction<glfwShowWindowDelegate>(NativeLibrary, nameof(glfwShowWindow));
         public static void glfwShowWindow(IntPtr window) => _glfwShowWindow(window);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwHideWindowDelegate(IntPtr window);
-        private static glfwHideWindowDelegate _glfwHideWindow = NativeFuncExecuter.LoadFunction<glfwHideWindowDelegate>(NativeLibrary, "glfwHideWindow");
+        private static glfwHideWindowDelegate _glfwHideWindow = NativeFuncExecuter.LoadFunction<glfwHideWindowDelegate>(NativeLibrary, nameof(glfwHideWindow));
         public static void glfwHideWindow(IntPtr window) => _glfwHideWindow(window);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwFocusWindowDelegate(IntPtr window);
-        private static glfwFocusWindowDelegate _glfwFocusWindow = NativeFuncExecuter.LoadFunction<glfwFocusWindowDelegate>(NativeLibrary, "glfwFocusWindow");
+        private static glfwFocusWindowDelegate _glfwFocusWindow = NativeFuncExecuter.LoadFunction<glfwFocusWindowDelegate>(NativeLibrary, nameof(glfwFocusWindow));
         public static void glfwFocusWindow(IntPtr window) => _glfwFocusWindow(window);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwRequestWindowAttentionDelegate(IntPtr window);
-        private static glfwRequestWindowAttentionDelegate _glfwRequestWindowAttention = NativeFuncExecuter.LoadFunction<glfwRequestWindowAttentionDelegate>(NativeLibrary, "glfwRequestWindowAttention");
+        private static glfwRequestWindowAttentionDelegate _glfwRequestWindowAttention = NativeFuncExecuter.LoadFunction<glfwRequestWindowAttentionDelegate>(NativeLibrary, nameof(glfwRequestWindowAttention));
         public static void glfwRequestWindowAttention(IntPtr window) => _glfwRequestWindowAttention(window);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr glfwGetWindowMonitorDelegate(IntPtr window);
-        private static glfwGetWindowMonitorDelegate _glfwGetWindowMonitor = NativeFuncExecuter.LoadFunction<glfwGetWindowMonitorDelegate>(NativeLibrary, "glfwGetWindowMonitor");
+        private static glfwGetWindowMonitorDelegate _glfwGetWindowMonitor = NativeFuncExecuter.LoadFunction<glfwGetWindowMonitorDelegate>(NativeLibrary, nameof(glfwGetWindowMonitor));
         public static IntPtr glfwGetWindowMonitor(IntPtr window) => _glfwGetWindowMonitor(window);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetWindowMonitorDelegate(IntPtr window, IntPtr monitor, int xpos, int ypos, int width, int height, int refreshRate);
-        private static glfwSetWindowMonitorDelegate _glfwSetWindowMonitor = NativeFuncExecuter.LoadFunction<glfwSetWindowMonitorDelegate>(NativeLibrary, "glfwSetWindowMonitor");
+        private static glfwSetWindowMonitorDelegate _glfwSetWindowMonitor = NativeFuncExecuter.LoadFunction<glfwSetWindowMonitorDelegate>(NativeLibrary, nameof(glfwSetWindowMonitor));
         public static void glfwSetWindowMonitor(IntPtr window, IntPtr monitor, int xpos, int ypos, int width, int height, int refreshRate) => _glfwSetWindowMonitor(window, monitor, xpos, ypos, width, height, refreshRate);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int glfwGetWindowAttribDelegate(IntPtr window, int attrib);
-        private static glfwGetWindowAttribDelegate _glfwGetWindowAttrib = NativeFuncExecuter.LoadFunction<glfwGetWindowAttribDelegate>(NativeLibrary, "glfwGetWindowAttrib");
+        private static glfwGetWindowAttribDelegate _glfwGetWindowAttrib = NativeFuncExecuter.LoadFunction<glfwGetWindowAttribDelegate>(NativeLibrary, nameof(glfwGetWindowAttrib));
         public static int glfwGetWindowAttrib(IntPtr window, int attrib) => _glfwGetWindowAttrib(window, attrib);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetWindowAttribDelegate(IntPtr window, int attrib, int value);
-        private static glfwSetWindowAttribDelegate _glfwSetWindowAttrib = NativeFuncExecuter.LoadFunction<glfwSetWindowAttribDelegate>(NativeLibrary, "glfwSetWindowAttrib");
+        private static glfwSetWindowAttribDelegate _glfwSetWindowAttrib = NativeFuncExecuter.LoadFunction<glfwSetWindowAttribDelegate>(NativeLibrary, nameof(glfwSetWindowAttrib));
         public static void glfwSetWindowAttrib(IntPtr window, int attrib, int value) => _glfwSetWindowAttrib(window, attrib, value);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetWindowUserPointerDelegate(IntPtr window, IntPtr pointer);
-        private static glfwSetWindowUserPointerDelegate _glfwSetWindowUserPointer = NativeFuncExecuter.LoadFunction<glfwSetWindowUserPointerDelegate>(NativeLibrary, "glfwSetWindowUserPointer");
+        private static glfwSetWindowUserPointerDelegate _glfwSetWindowUserPointer = NativeFuncExecuter.LoadFunction<glfwSetWindowUserPointerDelegate>(NativeLibrary, nameof(glfwSetWindowUserPointer));
         public static void glfwSetWindowUserPointer(IntPtr window, IntPtr pointer) => _glfwSetWindowUserPointer(window, pointer);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr glfwGetWindowUserPointerDelegate(IntPtr window);
-        private static glfwGetWindowUserPointerDelegate _glfwGetWindowUserPointer = NativeFuncExecuter.LoadFunction<glfwGetWindowUserPointerDelegate>(NativeLibrary, "glfwGetWindowUserPointer");
+        private static glfwGetWindowUserPointerDelegate _glfwGetWindowUserPointer = NativeFuncExecuter.LoadFunction<glfwGetWindowUserPointerDelegate>(NativeLibrary, nameof(glfwGetWindowUserPointer));
         public static IntPtr glfwGetWindowUserPointer(IntPtr window) => _glfwGetWindowUserPointer(window);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWwindowposfun glfwSetWindowPosCallbackDelegate(IntPtr window, GLFWwindowposfun callback);
-        private static glfwSetWindowPosCallbackDelegate _glfwSetWindowPosCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowPosCallbackDelegate>(NativeLibrary, "glfwSetWindowPosCallback");
+        private static glfwSetWindowPosCallbackDelegate _glfwSetWindowPosCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowPosCallbackDelegate>(NativeLibrary, nameof(glfwSetWindowPosCallback));
         public static GLFWwindowposfun glfwSetWindowPosCallback(IntPtr window, GLFWwindowposfun callback) => _glfwSetWindowPosCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWwindowsizefun glfwSetWindowSizeCallbackDelegate(IntPtr window, GLFWwindowsizefun callback);
-        private static glfwSetWindowSizeCallbackDelegate _glfwSetWindowSizeCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowSizeCallbackDelegate>(NativeLibrary, "glfwSetWindowSizeCallback");
+        private static glfwSetWindowSizeCallbackDelegate _glfwSetWindowSizeCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowSizeCallbackDelegate>(NativeLibrary, nameof(glfwSetWindowSizeCallback));
         public static GLFWwindowsizefun glfwSetWindowSizeCallback(IntPtr window, GLFWwindowsizefun callback) => _glfwSetWindowSizeCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWwindowclosefun glfwSetWindowCloseCallbackDelegate(IntPtr window, GLFWwindowclosefun callback);
-        private static glfwSetWindowCloseCallbackDelegate _glfwSetWindowCloseCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowCloseCallbackDelegate>(NativeLibrary, "glfwSetWindowCloseCallback");
+        private static glfwSetWindowCloseCallbackDelegate _glfwSetWindowCloseCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowCloseCallbackDelegate>(NativeLibrary, nameof(glfwSetWindowCloseCallback));
         public static GLFWwindowclosefun glfwSetWindowCloseCallback(IntPtr window, GLFWwindowclosefun callback) => _glfwSetWindowCloseCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWwindowrefreshfun glfwSetWindowRefreshCallbackDelegate(IntPtr window, GLFWwindowrefreshfun callback);
-        private static glfwSetWindowRefreshCallbackDelegate _glfwSetWindowRefreshCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowRefreshCallbackDelegate>(NativeLibrary, "glfwSetWindowRefreshCallback");
+        private static glfwSetWindowRefreshCallbackDelegate _glfwSetWindowRefreshCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowRefreshCallbackDelegate>(NativeLibrary, nameof(glfwSetWindowRefreshCallback));
         public static GLFWwindowrefreshfun glfwSetWindowRefreshCallback(IntPtr window, GLFWwindowrefreshfun callback) => _glfwSetWindowRefreshCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWwindowfocusfun glfwSetWindowFocusCallbackDelegate(IntPtr window, GLFWwindowfocusfun callback);
-        private static glfwSetWindowFocusCallbackDelegate _glfwSetWindowFocusCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowFocusCallbackDelegate>(NativeLibrary, "glfwSetWindowFocusCallback");
+        private static glfwSetWindowFocusCallbackDelegate _glfwSetWindowFocusCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowFocusCallbackDelegate>(NativeLibrary, nameof(glfwSetWindowFocusCallback));
         public static GLFWwindowfocusfun glfwSetWindowFocusCallback(IntPtr window, GLFWwindowfocusfun callback) => _glfwSetWindowFocusCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWwindowiconifyfun glfwSetWindowIconifyCallbackDelegate(IntPtr window, GLFWwindowiconifyfun callback);
-        private static glfwSetWindowIconifyCallbackDelegate _glfwSetWindowIconifyCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowIconifyCallbackDelegate>(NativeLibrary, "glfwSetWindowIconifyCallback");
+        private static glfwSetWindowIconifyCallbackDelegate _glfwSetWindowIconifyCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowIconifyCallbackDelegate>(NativeLibrary, nameof(glfwSetWindowIconifyCallback));
         public static GLFWwindowiconifyfun glfwSetWindowIconifyCallback(IntPtr window, GLFWwindowiconifyfun callback) => _glfwSetWindowIconifyCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWwindowmaximizefun glfwSetWindowMaximizeCallbackDelegate(IntPtr window, GLFWwindowmaximizefun callback);
-        private static glfwSetWindowMaximizeCallbackDelegate _glfwSetWindowMaximizeCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowMaximizeCallbackDelegate>(NativeLibrary, "glfwSetWindowMaximizeCallback");
+        private static glfwSetWindowMaximizeCallbackDelegate _glfwSetWindowMaximizeCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowMaximizeCallbackDelegate>(NativeLibrary, nameof(glfwSetWindowMaximizeCallback));
         public static GLFWwindowmaximizefun glfwSetWindowMaximizeCallback(IntPtr window, GLFWwindowmaximizefun callback) => _glfwSetWindowMaximizeCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWframebuffersizefun glfwSetFramebufferSizeCallbackDelegate(IntPtr window, GLFWframebuffersizefun callback);
-        private static glfwSetFramebufferSizeCallbackDelegate _glfwSetFramebufferSizeCallback = NativeFuncExecuter.LoadFunction<glfwSetFramebufferSizeCallbackDelegate>(NativeLibrary, "glfwSetFramebufferSizeCallback");
+        private static glfwSetFramebufferSizeCallbackDelegate _glfwSetFramebufferSizeCallback = NativeFuncExecuter.LoadFunction<glfwSetFramebufferSizeCallbackDelegate>(NativeLibrary, nameof(glfwSetFramebufferSizeCallback));
         public static GLFWframebuffersizefun glfwSetFramebufferSizeCallback(IntPtr window, GLFWframebuffersizefun callback) => _glfwSetFramebufferSizeCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWwindowcontentscalefun glfwSetWindowContentScaleCallbackDelegate(IntPtr window, GLFWwindowcontentscalefun callback);
-        private static glfwSetWindowContentScaleCallbackDelegate _glfwSetWindowContentScaleCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowContentScaleCallbackDelegate>(NativeLibrary, "glfwSetWindowContentScaleCallback");
+        private static glfwSetWindowContentScaleCallbackDelegate _glfwSetWindowContentScaleCallback = NativeFuncExecuter.LoadFunction<glfwSetWindowContentScaleCallbackDelegate>(NativeLibrary, nameof(glfwSetWindowContentScaleCallback));
         public static GLFWwindowcontentscalefun glfwSetWindowContentScaleCallback(IntPtr window, GLFWwindowcontentscalefun callback) => _glfwSetWindowContentScaleCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwPollEventsDelegate();
-        private static glfwPollEventsDelegate _glfwPollEvents = NativeFuncExecuter.LoadFunction<glfwPollEventsDelegate>(NativeLibrary, "glfwPollEvents");
+        private static glfwPollEventsDelegate _glfwPollEvents = NativeFuncExecuter.LoadFunction<glfwPollEventsDelegate>(NativeLibrary, nameof(glfwPollEvents));
         public static void glfwPollEvents() => _glfwPollEvents();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwWaitEventsDelegate();
-        private static glfwWaitEventsDelegate _glfwWaitEvents = NativeFuncExecuter.LoadFunction<glfwWaitEventsDelegate>(NativeLibrary, "glfwWaitEvents");
+        private static glfwWaitEventsDelegate _glfwWaitEvents = NativeFuncExecuter.LoadFunction<glfwWaitEventsDelegate>(NativeLibrary, nameof(glfwWaitEvents));
         public static void glfwWaitEvents() => _glfwWaitEvents();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwWaitEventsTimeoutDelegate(double timeout);
-        private static glfwWaitEventsTimeoutDelegate _glfwWaitEventsTimeout = NativeFuncExecuter.LoadFunction<glfwWaitEventsTimeoutDelegate>(NativeLibrary, "glfwWaitEventsTimeout");
+        private static glfwWaitEventsTimeoutDelegate _glfwWaitEventsTimeout = NativeFuncExecuter.LoadFunction<glfwWaitEventsTimeoutDelegate>(NativeLibrary, nameof(glfwWaitEventsTimeout));
         public static void glfwWaitEventsTimeout(double timeout) => _glfwWaitEventsTimeout(timeout);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwPostEmptyEventDelegate();
-        private static glfwPostEmptyEventDelegate _glfwPostEmptyEvent = NativeFuncExecuter.LoadFunction<glfwPostEmptyEventDelegate>(NativeLibrary, "glfwPostEmptyEvent");
+        private static glfwPostEmptyEventDelegate _glfwPostEmptyEvent = NativeFuncExecuter.LoadFunction<glfwPostEmptyEventDelegate>(NativeLibrary, nameof(glfwPostEmptyEvent));
         public static void glfwPostEmptyEvent() => _glfwPostEmptyEvent();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int glfwGetInputModeDelegate(IntPtr window, int mode);
-        private static glfwGetInputModeDelegate _glfwGetInputMode = NativeFuncExecuter.LoadFunction<glfwGetInputModeDelegate>(NativeLibrary, "glfwGetInputMode");
+        private static glfwGetInputModeDelegate _glfwGetInputMode = NativeFuncExecuter.LoadFunction<glfwGetInputModeDelegate>(NativeLibrary, nameof(glfwGetInputMode));
         public static int glfwGetInputMode(IntPtr window, int mode) => _glfwGetInputMode(window, mode);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetInputModeDelegate(IntPtr window, int mode, int value);
-        private static glfwSetInputModeDelegate _glfwSetInputMode = NativeFuncExecuter.LoadFunction<glfwSetInputModeDelegate>(NativeLibrary, "glfwSetInputMode");
+        private static glfwSetInputModeDelegate _glfwSetInputMode = NativeFuncExecuter.LoadFunction<glfwSetInputModeDelegate>(NativeLibrary, nameof(glfwSetInputMode));
         public static void glfwSetInputMode(IntPtr window, int mode, int value) => _glfwSetInputMode(window, mode, value);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int glfwRawMouseMotionSupportedDelegate();
-        private static glfwRawMouseMotionSupportedDelegate _glfwRawMouseMotionSupported = NativeFuncExecuter.LoadFunction<glfwRawMouseMotionSupportedDelegate>(NativeLibrary, "glfwRawMouseMotionSupported");
+        private static glfwRawMouseMotionSupportedDelegate _glfwRawMouseMotionSupported = NativeFuncExecuter.LoadFunction<glfwRawMouseMotionSupportedDelegate>(NativeLibrary, nameof(glfwRawMouseMotionSupported));
         public static int glfwRawMouseMotionSupported() => _glfwRawMouseMotionSupported();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate string glfwGetKeyNameDelegate(int key, int scancode);
-        private static glfwGetKeyNameDelegate _glfwGetKeyName = NativeFuncExecuter.LoadFunction<glfwGetKeyNameDelegate>(NativeLibrary, "glfwGetKeyName");
+        private static glfwGetKeyNameDelegate _glfwGetKeyName = NativeFuncExecuter.LoadFunction<glfwGetKeyNameDelegate>(NativeLibrary, nameof(glfwGetKeyName));
         public static string glfwGetKeyName(int key, int scancode) => _glfwGetKeyName(key, scancode);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int glfwGetKeyScancodeDelegate(int key);
-        private static glfwGetKeyScancodeDelegate _glfwGetKeyScancode = NativeFuncExecuter.LoadFunction<glfwGetKeyScancodeDelegate>(NativeLibrary, "glfwGetKeyScancode");
+        private static glfwGetKeyScancodeDelegate _glfwGetKeyScancode = NativeFuncExecuter.LoadFunction<glfwGetKeyScancodeDelegate>(NativeLibrary, nameof(glfwGetKeyScancode));
         public static int glfwGetKeyScancode(int key) => _glfwGetKeyScancode(key);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int glfwGetKeyDelegate(IntPtr window, int key);
-        private static glfwGetKeyDelegate _glfwGetKey = NativeFuncExecuter.LoadFunction<glfwGetKeyDelegate>(NativeLibrary, "glfwGetKey");
+        private static glfwGetKeyDelegate _glfwGetKey = NativeFuncExecuter.LoadFunction<glfwGetKeyDelegate>(NativeLibrary, nameof(glfwGetKey));
         public static int glfwGetKey(IntPtr window, int key) => _glfwGetKey(window, key);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int glfwGetMouseButtonDelegate(IntPtr window, int button);
-        private static glfwGetMouseButtonDelegate _glfwGetMouseButton = NativeFuncExecuter.LoadFunction<glfwGetMouseButtonDelegate>(NativeLibrary, "glfwGetMouseButton");
+        private static glfwGetMouseButtonDelegate _glfwGetMouseButton = NativeFuncExecuter.LoadFunction<glfwGetMouseButtonDelegate>(NativeLibrary, nameof(glfwGetMouseButton));
         public static int glfwGetMouseButton(IntPtr window, int button) => _glfwGetMouseButton(window, button);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwGetCursorPosDelegate(IntPtr window, out double xpos, out double ypos);
-        private static glfwGetCursorPosDelegate _glfwGetCursorPos = NativeFuncExecuter.LoadFunction<glfwGetCursorPosDelegate>(NativeLibrary, "glfwGetCursorPos");
+        private static glfwGetCursorPosDelegate _glfwGetCursorPos = NativeFuncExecuter.LoadFunction<glfwGetCursorPosDelegate>(NativeLibrary, nameof(glfwGetCursorPos));
         public static void glfwGetCursorPos(IntPtr window, out double xpos, out double ypos) => _glfwGetCursorPos(window, out xpos, out ypos);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetCursorPosDelegate(IntPtr window, double xpos, double ypos);
-        private static glfwSetCursorPosDelegate _glfwSetCursorPos = NativeFuncExecuter.LoadFunction<glfwSetCursorPosDelegate>(NativeLibrary, "glfwSetCursorPos");
+        private static glfwSetCursorPosDelegate _glfwSetCursorPos = NativeFuncExecuter.LoadFunction<glfwSetCursorPosDelegate>(NativeLibrary, nameof(glfwSetCursorPos));
         public static void glfwSetCursorPos(IntPtr window, double xpos, double ypos) => _glfwSetCursorPos(window, xpos, ypos);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr glfwCreateCursorDelegate(IntPtr image, int xhot, int yhot);
-        private static glfwCreateCursorDelegate _glfwCreateCursor = NativeFuncExecuter.LoadFunction<glfwCreateCursorDelegate>(NativeLibrary, "glfwCreateCursor");
+        private static glfwCreateCursorDelegate _glfwCreateCursor = NativeFuncExecuter.LoadFunction<glfwCreateCursorDelegate>(NativeLibrary, nameof(glfwCreateCursor));
         public static IntPtr glfwCreateCursor(IntPtr image, int xhot, int yhot) => _glfwCreateCursor(image, xhot, yhot);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr glfwCreateStandardCursorDelegate(int shape);
-        private static glfwCreateStandardCursorDelegate _glfwCreateStandardCursor = NativeFuncExecuter.LoadFunction<glfwCreateStandardCursorDelegate>(NativeLibrary, "glfwCreateStandardCursor");
+        private static glfwCreateStandardCursorDelegate _glfwCreateStandardCursor = NativeFuncExecuter.LoadFunction<glfwCreateStandardCursorDelegate>(NativeLibrary, nameof(glfwCreateStandardCursor));
         public static IntPtr glfwCreateStandardCursor(int shape) => _glfwCreateStandardCursor(shape);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwDestroyCursorDelegate(IntPtr cursor);
-        private static glfwDestroyCursorDelegate _glfwDestroyCursor = NativeFuncExecuter.LoadFunction<glfwDestroyCursorDelegate>(NativeLibrary, "glfwDestroyCursor");
+        private static glfwDestroyCursorDelegate _glfwDestroyCursor = NativeFuncExecuter.LoadFunction<glfwDestroyCursorDelegate>(NativeLibrary, nameof(glfwDestroyCursor));
         public static void glfwDestroyCursor(IntPtr cursor) => _glfwDestroyCursor(cursor);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetCursorDelegate(IntPtr window, IntPtr cursor);
-        private static glfwSetCursorDelegate _glfwSetCursor = NativeFuncExecuter.LoadFunction<glfwSetCursorDelegate>(NativeLibrary, "glfwSetCursor");
+        private static glfwSetCursorDelegate _glfwSetCursor = NativeFuncExecuter.LoadFunction<glfwSetCursorDelegate>(NativeLibrary, nameof(glfwSetCursor));
         public static void glfwSetCursor(IntPtr window, IntPtr cursor) => _glfwSetCursor(window, cursor);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWkeyfun glfwSetKeyCallbackDelegate(IntPtr window, GLFWkeyfun callback);
-        private static glfwSetKeyCallbackDelegate _glfwSetKeyCallback = NativeFuncExecuter.LoadFunction<glfwSetKeyCallbackDelegate>(NativeLibrary, "glfwSetKeyCallback");
+        private static glfwSetKeyCallbackDelegate _glfwSetKeyCallback = NativeFuncExecuter.LoadFunction<glfwSetKeyCallbackDelegate>(NativeLibrary, nameof(glfwSetKeyCallback));
         public static GLFWkeyfun glfwSetKeyCallback(IntPtr window, GLFWkeyfun callback) => _glfwSetKeyCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWcharfun glfwSetCharCallbackDelegate(IntPtr window, GLFWcharfun callback);
-        private static glfwSetCharCallbackDelegate _glfwSetCharCallback = NativeFuncExecuter.LoadFunction<glfwSetCharCallbackDelegate>(NativeLibrary, "glfwSetCharCallback");
+        private static glfwSetCharCallbackDelegate _glfwSetCharCallback = NativeFuncExecuter.LoadFunction<glfwSetCharCallbackDelegate>(NativeLibrary, nameof(glfwSetCharCallback));
         public static GLFWcharfun glfwSetCharCallback(IntPtr window, GLFWcharfun callback) => _glfwSetCharCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWcharmodsfun glfwSetCharModsCallbackDelegate(IntPtr window, GLFWcharmodsfun callback);
-        private static glfwSetCharModsCallbackDelegate _glfwSetCharModsCallback = NativeFuncExecuter.LoadFunction<glfwSetCharModsCallbackDelegate>(NativeLibrary, "glfwSetCharModsCallback");
+        private static glfwSetCharModsCallbackDelegate _glfwSetCharModsCallback = NativeFuncExecuter.LoadFunction<glfwSetCharModsCallbackDelegate>(NativeLibrary, nameof(glfwSetCharModsCallback));
         public static GLFWcharmodsfun glfwSetCharModsCallback(IntPtr window, GLFWcharmodsfun callback) => _glfwSetCharModsCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWmousebuttonfun glfwSetMouseButtonCallbackDelegate(IntPtr window, GLFWmousebuttonfun callback);
-        private static glfwSetMouseButtonCallbackDelegate _glfwSetMouseButtonCallback = NativeFuncExecuter.LoadFunction<glfwSetMouseButtonCallbackDelegate>(NativeLibrary, "glfwSetMouseButtonCallback");
+        private static glfwSetMouseButtonCallbackDelegate _glfwSetMouseButtonCallback = NativeFuncExecuter.LoadFunction<glfwSetMouseButtonCallbackDelegate>(NativeLibrary, nameof(glfwSetMouseButtonCallback));
         public static GLFWmousebuttonfun glfwSetMouseButtonCallback(IntPtr window, GLFWmousebuttonfun callback) => _glfwSetMouseButtonCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWcursorposfun glfwSetCursorPosCallbackDelegate(IntPtr window, GLFWcursorposfun callback);
-        private static glfwSetCursorPosCallbackDelegate _glfwSetCursorPosCallback = NativeFuncExecuter.LoadFunction<glfwSetCursorPosCallbackDelegate>(NativeLibrary, "glfwSetCursorPosCallback");
+        private static glfwSetCursorPosCallbackDelegate _glfwSetCursorPosCallback = NativeFuncExecuter.LoadFunction<glfwSetCursorPosCallbackDelegate>(NativeLibrary, nameof(glfwSetCursorPosCallback));
         public static GLFWcursorposfun glfwSetCursorPosCallback(IntPtr window, GLFWcursorposfun callback) => _glfwSetCursorPosCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWcursorenterfun glfwSetCursorEnterCallbackDelegate(IntPtr window, GLFWcursorenterfun callback);
-        private static glfwSetCursorEnterCallbackDelegate _glfwSetCursorEnterCallback = NativeFuncExecuter.LoadFunction<glfwSetCursorEnterCallbackDelegate>(NativeLibrary, "glfwSetCursorEnterCallback");
+        private static glfwSetCursorEnterCallbackDelegate _glfwSetCursorEnterCallback = NativeFuncExecuter.LoadFunction<glfwSetCursorEnterCallbackDelegate>(NativeLibrary, nameof(glfwSetCursorEnterCallback));
         public static GLFWcursorenterfun glfwSetCursorEnterCallback(IntPtr window, GLFWcursorenterfun callback) => _glfwSetCursorEnterCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWscrollfun glfwSetScrollCallbackDelegate(IntPtr window, GLFWscrollfun callback);
-        private static glfwSetScrollCallbackDelegate _glfwSetScrollCallback = NativeFuncExecuter.LoadFunction<glfwSetScrollCallbackDelegate>(NativeLibrary, "glfwSetScrollCallback");
+        private static glfwSetScrollCallbackDelegate _glfwSetScrollCallback = NativeFuncExecuter.LoadFunction<glfwSetScrollCallbackDelegate>(NativeLibrary, nameof(glfwSetScrollCallback));
         public static GLFWscrollfun glfwSetScrollCallback(IntPtr window, GLFWscrollfun callback) => _glfwSetScrollCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWdropfun glfwSetDropCallbackDelegate(IntPtr window, GLFWdropfun callback);
-        private static glfwSetDropCallbackDelegate _glfwSetDropCallback = NativeFuncExecuter.LoadFunction<glfwSetDropCallbackDelegate>(NativeLibrary, "glfwSetDropCallback");
+        private static glfwSetDropCallbackDelegate _glfwSetDropCallback = NativeFuncExecuter.LoadFunction<glfwSetDropCallbackDelegate>(NativeLibrary, nameof(glfwSetDropCallback));
         public static GLFWdropfun glfwSetDropCallback(IntPtr window, GLFWdropfun callback) => _glfwSetDropCallback(window, callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int glfwJoystickPresentDelegate(int jid);
-        private static glfwJoystickPresentDelegate _glfwJoystickPresent = NativeFuncExecuter.LoadFunction<glfwJoystickPresentDelegate>(NativeLibrary, "glfwJoystickPresent");
+        private static glfwJoystickPresentDelegate _glfwJoystickPresent = NativeFuncExecuter.LoadFunction<glfwJoystickPresentDelegate>(NativeLibrary, nameof(glfwJoystickPresent));
         public static int glfwJoystickPresent(int jid) => _glfwJoystickPresent(jid);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate float* glfwGetJoystickAxesDelegate(int jid, out int count);
-        private static glfwGetJoystickAxesDelegate _glfwGetJoystickAxes = NativeFuncExecuter.LoadFunction<glfwGetJoystickAxesDelegate>(NativeLibrary, "glfwGetJoystickAxes");
+        private static glfwGetJoystickAxesDelegate _glfwGetJoystickAxes = NativeFuncExecuter.LoadFunction<glfwGetJoystickAxesDelegate>(NativeLibrary, nameof(glfwGetJoystickAxes));
         public static float* glfwGetJoystickAxes(int jid, out int count) => _glfwGetJoystickAxes(jid, out count);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate string glfwGetJoystickButtonsDelegate(int jid, out int count);
-        private static glfwGetJoystickButtonsDelegate _glfwGetJoystickButtons = NativeFuncExecuter.LoadFunction<glfwGetJoystickButtonsDelegate>(NativeLibrary, "glfwGetJoystickButtons");
+        private static glfwGetJoystickButtonsDelegate _glfwGetJoystickButtons = NativeFuncExecuter.LoadFunction<glfwGetJoystickButtonsDelegate>(NativeLibrary, nameof(glfwGetJoystickButtons));
         public static string glfwGetJoystickButtons(int jid, out int count) => _glfwGetJoystickButtons(jid, out count);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate string glfwGetJoystickHatsDelegate(int jid, out int count);
-        private static glfwGetJoystickHatsDelegate _glfwGetJoystickHats = NativeFuncExecuter.LoadFunction<glfwGetJoystickHatsDelegate>(NativeLibrary, "glfwGetJoystickHats");
+        private static glfwGetJoystickHatsDelegate _glfwGetJoystickHats = NativeFuncExecuter.LoadFunction<glfwGetJoystickHatsDelegate>(NativeLibrary, nameof(glfwGetJoystickHats));
         public static string glfwGetJoystickHats(int jid, out int count) => _glfwGetJoystickHats(jid, out count);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate string glfwGetJoystickNameDelegate(int jid);
-        private static glfwGetJoystickNameDelegate _glfwGetJoystickName = NativeFuncExecuter.LoadFunction<glfwGetJoystickNameDelegate>(NativeLibrary, "glfwGetJoystickName");
+        private static glfwGetJoystickNameDelegate _glfwGetJoystickName = NativeFuncExecuter.LoadFunction<glfwGetJoystickNameDelegate>(NativeLibrary, nameof(glfwGetJoystickName));
         public static string glfwGetJoystickName(int jid) => _glfwGetJoystickName(jid);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate string glfwGetJoystickGUIDDelegate(int jid);
-        private static glfwGetJoystickGUIDDelegate _glfwGetJoystickGUID = NativeFuncExecuter.LoadFunction<glfwGetJoystickGUIDDelegate>(NativeLibrary, "glfwGetJoystickGUID");
+        private static glfwGetJoystickGUIDDelegate _glfwGetJoystickGUID = NativeFuncExecuter.LoadFunction<glfwGetJoystickGUIDDelegate>(NativeLibrary, nameof(glfwGetJoystickGUID));
         public static string glfwGetJoystickGUID(int jid) => _glfwGetJoystickGUID(jid);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetJoystickUserPointerDelegate(int jid, IntPtr pointer);
-        private static glfwSetJoystickUserPointerDelegate _glfwSetJoystickUserPointer = NativeFuncExecuter.LoadFunction<glfwSetJoystickUserPointerDelegate>(NativeLibrary, "glfwSetJoystickUserPointer");
+        private static glfwSetJoystickUserPointerDelegate _glfwSetJoystickUserPointer = NativeFuncExecuter.LoadFunction<glfwSetJoystickUserPointerDelegate>(NativeLibrary, nameof(glfwSetJoystickUserPointer));
         public static void glfwSetJoystickUserPointer(int jid, IntPtr pointer) => _glfwSetJoystickUserPointer(jid, pointer);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr glfwGetJoystickUserPointerDelegate(int jid);
-        private static glfwGetJoystickUserPointerDelegate _glfwGetJoystickUserPointer = NativeFuncExecuter.LoadFunction<glfwGetJoystickUserPointerDelegate>(NativeLibrary, "glfwGetJoystickUserPointer");
+        private static glfwGetJoystickUserPointerDelegate _glfwGetJoystickUserPointer = NativeFuncExecuter.LoadFunction<glfwGetJoystickUserPointerDelegate>(NativeLibrary, nameof(glfwGetJoystickUserPointer));
         public static IntPtr glfwGetJoystickUserPointer(int jid) => _glfwGetJoystickUserPointer(jid);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int glfwJoystickIsGamepadDelegate(int jid);
-        private static glfwJoystickIsGamepadDelegate _glfwJoystickIsGamepad = NativeFuncExecuter.LoadFunction<glfwJoystickIsGamepadDelegate>(NativeLibrary, "glfwJoystickIsGamepad");
+        private static glfwJoystickIsGamepadDelegate _glfwJoystickIsGamepad = NativeFuncExecuter.LoadFunction<glfwJoystickIsGamepadDelegate>(NativeLibrary, nameof(glfwJoystickIsGamepad));
         public static int glfwJoystickIsGamepad(int jid) => _glfwJoystickIsGamepad(jid);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate GLFWjoystickfun glfwSetJoystickCallbackDelegate(GLFWjoystickfun callback);
-        private static glfwSetJoystickCallbackDelegate _glfwSetJoystickCallback = NativeFuncExecuter.LoadFunction<glfwSetJoystickCallbackDelegate>(NativeLibrary, "glfwSetJoystickCallback");
+        private static glfwSetJoystickCallbackDelegate _glfwSetJoystickCallback = NativeFuncExecuter.LoadFunction<glfwSetJoystickCallbackDelegate>(NativeLibrary, nameof(glfwSetJoystickCallback));
         public static GLFWjoystickfun glfwSetJoystickCallback(GLFWjoystickfun callback) => _glfwSetJoystickCallback(callback);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int glfwUpdateGamepadMappingsDelegate(string @string);
-        private static glfwUpdateGamepadMappingsDelegate _glfwUpdateGamepadMappings = NativeFuncExecuter.LoadFunction<glfwUpdateGamepadMappingsDelegate>(NativeLibrary, "glfwUpdateGamepadMappings");
+        private static glfwUpdateGamepadMappingsDelegate _glfwUpdateGamepadMappings = NativeFuncExecuter.LoadFunction<glfwUpdateGamepadMappingsDelegate>(NativeLibrary, nameof(glfwUpdateGamepadMappings));
         public static int glfwUpdateGamepadMappings(string @string) => _glfwUpdateGamepadMappings(@string);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate string glfwGetGamepadNameDelegate(int jid);
-        private static glfwGetGamepadNameDelegate _glfwGetGamepadName = NativeFuncExecuter.LoadFunction<glfwGetGamepadNameDelegate>(NativeLibrary, "glfwGetGamepadName");
+        private static glfwGetGamepadNameDelegate _glfwGetGamepadName = NativeFuncExecuter.LoadFunction<glfwGetGamepadNameDelegate>(NativeLibrary, nameof(glfwGetGamepadName));
         public static string glfwGetGamepadName(int jid) => _glfwGetGamepadName(jid);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int glfwGetGamepadStateDelegate(int jid, IntPtr state);
-        private static glfwGetGamepadStateDelegate _glfwGetGamepadState = NativeFuncExecuter.LoadFunction<glfwGetGamepadStateDelegate>(NativeLibrary, "glfwGetGamepadState");
+        private static glfwGetGamepadStateDelegate _glfwGetGamepadState = NativeFuncExecuter.LoadFunction<glfwGetGamepadStateDelegate>(NativeLibrary, nameof(glfwGetGamepadState));
         public static int glfwGetGamepadState(int jid, IntPtr state) => _glfwGetGamepadState(jid, state);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetClipboardStringDelegate(IntPtr window, string @string);
-        private static glfwSetClipboardStringDelegate _glfwSetClipboardString = NativeFuncExecuter.LoadFunction<glfwSetClipboardStringDelegate>(NativeLibrary, "glfwSetClipboardString");
+        private static glfwSetClipboardStringDelegate _glfwSetClipboardString = NativeFuncExecuter.LoadFunction<glfwSetClipboardStringDelegate>(NativeLibrary, nameof(glfwSetClipboardString));
         public static void glfwSetClipboardString(IntPtr window, string @string) => _glfwSetClipboardString(window, @string);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate string glfwGetClipboardStringDelegate(IntPtr window);
-        private static glfwGetClipboardStringDelegate _glfwGetClipboardString = NativeFuncExecuter.LoadFunction<glfwGetClipboardStringDelegate>(NativeLibrary, "glfwGetClipboardString");
+        private static glfwGetClipboardStringDelegate _glfwGetClipboardString = NativeFuncExecuter.LoadFunction<glfwGetClipboardStringDelegate>(NativeLibrary, nameof(glfwGetClipboardString));
         public static string glfwGetClipboardString(IntPtr window) => _glfwGetClipboardString(window);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate double glfwGetTimeDelegate();
-        private static glfwGetTimeDelegate _glfwGetTime = NativeFuncExecuter.LoadFunction<glfwGetTimeDelegate>(NativeLibrary, "glfwGetTime");
+        private static glfwGetTimeDelegate _glfwGetTime = NativeFuncExecuter.LoadFunction<glfwGetTimeDelegate>(NativeLibrary, nameof(glfwGetTime));
         public static double glfwGetTime() => _glfwGetTime();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSetTimeDelegate(double time);
-        private static glfwSetTimeDelegate _glfwSetTime = NativeFuncExecuter.LoadFunction<glfwSetTimeDelegate>(NativeLibrary, "glfwSetTime");
+        private static glfwSetTimeDelegate _glfwSetTime = NativeFuncExecuter.LoadFunction<glfwSetTimeDelegate>(NativeLibrary, nameof(glfwSetTime));
         public static void glfwSetTime(double time) => _glfwSetTime(time);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate ulong glfwGetTimerValueDelegate();
-        private static glfwGetTimerValueDelegate _glfwGetTimerValue = NativeFuncExecuter.LoadFunction<glfwGetTimerValueDelegate>(NativeLibrary, "glfwGetTimerValue");
+        private static glfwGetTimerValueDelegate _glfwGetTimerValue = NativeFuncExecuter.LoadFunction<glfwGetTimerValueDelegate>(NativeLibrary, nameof(glfwGetTimerValue));
         public static ulong glfwGetTimerValue() => _glfwGetTimerValue();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate ulong glfwGetTimerFrequencyDelegate();
-        private static glfwGetTimerFrequencyDelegate _glfwGetTimerFrequency = NativeFuncExecuter.LoadFunction<glfwGetTimerFrequencyDelegate>(NativeLibrary, "glfwGetTimerFrequency");
+        private static glfwGetTimerFrequencyDelegate _glfwGetTimerFrequency = NativeFuncExecuter.LoadFunction<glfwGetTimerFrequencyDelegate>(NativeLibrary, nameof(glfwGetTimerFrequency));
         public static ulong glfwGetTimerFrequency() => _glfwGetTimerFrequency();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwMakeContextCurrentDelegate(IntPtr window);
-        private static glfwMakeContextCurrentDelegate _glfwMakeContextCurrent = NativeFuncExecuter.LoadFunction<glfwMakeContextCurrentDelegate>(NativeLibrary, "glfwMakeContextCurrent");
+        private static glfwMakeContextCurrentDelegate _glfwMakeContextCurrent = NativeFuncExecuter.LoadFunction<glfwMakeContextCurrentDelegate>(NativeLibrary, nameof(glfwMakeContextCurrent));
         public static void glfwMakeContextCurrent(IntPtr window) => _glfwMakeContextCurrent(window);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr glfwGetCurrentContextDelegate();
-        private static glfwGetCurrentContextDelegate _glfwGetCurrentContext = NativeFuncExecuter.LoadFunction<glfwGetCurrentContextDelegate>(NativeLibrary, "glfwGetCurrentContext");
+        private static glfwGetCurrentContextDelegate _glfwGetCurrentContext = NativeFuncExecuter.LoadFunction<glfwGetCurrentContextDelegate>(NativeLibrary, nameof(glfwGetCurrentContext));
         public static IntPtr glfwGetCurrentContext() => _glfwGetCurrentContext();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSwapBuffersDelegate(IntPtr window);
-        private static glfwSwapBuffersDelegate _glfwSwapBuffers = NativeFuncExecuter.LoadFunction<glfwSwapBuffersDelegate>(NativeLibrary, "glfwSwapBuffers");
+        private static glfwSwapBuffersDelegate _glfwSwapBuffers = NativeFuncExecuter.LoadFunction<glfwSwapBuffersDelegate>(NativeLibrary, nameof(glfwSwapBuffers));
         public static void glfwSwapBuffers(IntPtr window) => _glfwSwapBuffers(window);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void glfwSwapIntervalDelegate(int interval);
-        private static glfwSwapIntervalDelegate _glfwSwapInterval = NativeFuncExecuter.LoadFunction<glfwSwapIntervalDelegate>(NativeLibrary, "glfwSwapInterval");
+        private static glfwSwapIntervalDelegate _glfwSwapInterval = NativeFuncExecuter.LoadFunction<glfwSwapIntervalDelegate>(NativeLibrary, nameof(glfwSwapInterval));
         public static void glfwSwapInterval(int interval) => _glfwSwapInterval(interval);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int glfwExtensionSupportedDelegate(string extension);
-        private static glfwExtensionSupportedDelegate _glfwExtensionSupported = NativeFuncExecuter.LoadFunction<glfwExtensionSupportedDelegate>(NativeLibrary, "glfwExtensionSupported");
+        private static glfwExtensionSupportedDelegate _glfwExtensionSupported = NativeFuncExecuter.LoadFunction<glfwExtensionSupportedDelegate>(NativeLibrary, nameof(glfwExtensionSupported));
         public static int glfwExtensionSupported(string extension) => _glfwExtensionSupported(extension);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr glfwGetProcAddressDelegate(string procname);
-        private static glfwGetProcAddressDelegate _glfwGetProcAddress = NativeFuncExecuter.LoadFunction<glfwGetProcAddressDelegate>(NativeLibrary, "glfwGetProcAddress");
+        private static glfwGetProcAddressDelegate _glfwGetProcAddress = NativeFuncExecuter.LoadFunction<glfwGetProcAddressDelegate>(NativeLibrary, nameof(glfwGetProcAddress));
         public static IntPtr glfwGetProcAddress(string procname) => _glfwGetProcAddress(procname);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int glfwVulkanSupportedDelegate();
-        private static glfwVulkanSupportedDelegate _glfwVulkanSupported = NativeFuncExecuter.LoadFunction<glfwVulkanSupportedDelegate>(NativeLibrary, "glfwVulkanSupported");
+        private static glfwVulkanSupportedDelegate _glfwVulkanSupported = NativeFuncExecuter.LoadFunction<glfwVulkanSupportedDelegate>(NativeLibrary, nameof(glfwVulkanSupported));
         public static int glfwVulkanSupported() => _glfwVulkanSupported();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate char** glfwGetRequiredInstanceExtensionsDelegate(out uint count);
-        private static glfwGetRequiredInstanceExtensionsDelegate _glfwGetRequiredInstanceExtensions = NativeFuncExecuter.LoadFunction<glfwGetRequiredInstanceExtensionsDelegate>(NativeLibrary, "glfwGetRequiredInstanceExtensions");
+        private static glfwGetRequiredInstanceExtensionsDelegate _glfwGetRequiredInstanceExtensions = NativeFuncExecuter.LoadFunction<glfwGetRequiredInstanceExtensionsDelegate>(NativeLibrary, nameof(glfwGetRequiredInstanceExtensions));
         public static char** glfwGetRequiredInstanceExtensions(out uint count) => _glfwGetRequiredInstanceExtensions(out count);
     }
 }

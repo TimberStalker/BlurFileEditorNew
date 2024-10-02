@@ -4,12 +4,12 @@ using Editor.Windows;
 using ImGuiNET;
 using System.Diagnostics.CodeAnalysis;
 
-public class ProjectExplorerWindow : IWindow
+public class ProjectExplorerWindow : GuiWindow
 {
     string filter = "";
     FileSystemObject parentObject;
-    public WindowManager WindowManager { get; }
-    public ProjectExplorerWindow(string directory, WindowManager windows)
+    public GuiWindowManager WindowManager { get; }
+    public ProjectExplorerWindow(string directory, GuiWindowManager windows)
     {
         parentObject = FileSystemObject.Create(directory);
         WindowManager = windows;
@@ -56,7 +56,7 @@ public class ProjectExplorerWindow : IWindow
     {
         if (MatchesExtension(file, ".bin", ".xt"))
         {
-            WindowManager.AddWindow(new XtEditorWindow(file));
+            WindowManager.AddWindow(new XtEditorWindow(WindowManager, file));
         }
         else if(MatchesExtension(file, ".png", ".jpg"))
         {

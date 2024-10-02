@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using static System.Formats.Asn1.AsnWriter;
 
 namespace Editor.Windows;
-public class ImageWindow : IWindow
+public class ImageWindow : GuiWindow, IDisposable
 {
     public string TexturePath { get; }
     Texture2D texture;
@@ -38,8 +38,13 @@ public class ImageWindow : IWindow
         }
         return open;
     }
+
+    public void Dispose()
+    {
+        texture.Dispose();
+    }
 }
-public class DirectXImageWindow : IWindow
+public class DirectXImageWindow : GuiWindow, IDisposable
 {
     public string TexturePath { get; }
     TextureDisplay Display { get; }
@@ -79,11 +84,17 @@ public class DirectXImageWindow : IWindow
         }
         return open;
     }
+
+
+    public void Dispose()
+    {
+        if (Display is IDisposable d) d.Dispose();
+    }
     interface TextureDisplay
     {
         public void Draw();
     }
-    class SingleImage : TextureDisplay
+    class SingleImage : TextureDisplay, IDisposable
     {
         Texture2D texture;
         float scale = 0;
@@ -96,22 +107,30 @@ public class DirectXImageWindow : IWindow
             texture = Texture2D.CreateFromBytes(bytes);
             sImage.Dispose();
         }
-
+        Vector2 offset;
+        Vector2 padding = new Vector2(20, 20);
+        Vector2 halfPadding = new Vector2(10, 10);
         public void Draw()
         {
-            scale += ImGui.GetIO().MouseWheel / 4;
-
-            if(ImGui.IsMouseDown(ImGuiMouseButton.Left))
-            {
-                var delta = ImGui.GetIO().MouseDelta;
-                ImGui.SetScrollX(ImGui.GetScrollX() - delta.X);
-                ImGui.SetScrollY(ImGui.GetScrollY() - delta.Y);
-            }
-
-            var drawList = ImGui.GetWindowDrawList();
+            ImGui.BeginChild("container", Vector2.Zero, true, ImGuiWindowFlags.HorizontalScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
 
             var size = ImGui.GetWindowSize();
             var minSize = MathF.Max(MathF.Min(size.X, size.Y) - 60, 80);
+
+            Vector2 offset = new Vector2(size.X / 2, size.Y / 2);
+
+            var cursorScreenPos = ImGui.GetCursorScreenPos();
+            if (ImGui.IsWindowHovered())
+            {
+                scale += ImGui.GetIO().MouseWheel / 4;
+
+                if(ImGui.IsMouseDown(ImGuiMouseButton.Middle))
+                {
+                    var delta = ImGui.GetIO().MouseDelta;
+                    ImGui.SetScrollX(ImGui.GetScrollX() - delta.X);
+                    ImGui.SetScrollY(ImGui.GetScrollY() - delta.Y);
+                }
+            }
 
             int width = texture.Width;
             int height = texture.Height;
@@ -130,9 +149,15 @@ public class DirectXImageWindow : IWindow
             }
 
             ImGui.Image(texture, new Vector2(width, height) * MathF.Exp(scale));
+            ImGui.EndChild();
+        }
+
+        public void Dispose()
+        {
+            texture.Dispose();
         }
     }
-    class CubemapImage : TextureDisplay
+    class CubemapImage : TextureDisplay, IDisposable
     {
         CubemapTexture texture;
         Texture2D renderTexture;
@@ -140,7 +165,8 @@ public class DirectXImageWindow : IWindow
         Shader shader;
         float pitch;
         float yaw;
-        float fov = MathF.PI * 4 / 5;
+        const float standardFov = 65 * MathF.PI / 180;
+        float fov = standardFov;
         uint vao;
         uint vbo;
         public CubemapImage(ScratchImage sImage, TexMetadata metadata)
@@ -159,82 +185,65 @@ public class DirectXImageWindow : IWindow
 
             GL.glGenVertexArrays(1, out vao);
             GL.glBindVertexArray(vao);
-
-            GL.glGenBuffers(GL.GL_ARRAY_BUFFER, out vbo);
+            
+            GL.glGenBuffers(1, out vbo);
             GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo);
             GL.glBufferData(GL.GL_ARRAY_BUFFER, (ulong)(sizeof(float) * skyboxVertices.Length), skyboxVertices, GL.GL_STATIC_DRAW); 
-            GL.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 6 * sizeof(float), 0);
+            GL.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 0, 0);
             GL.glEnableVertexAttribArray(0);
-
+            
             GL.glBindVertexArray(0);
-
+            
             shader = Shader.Create(Path.Combine(Environment.CurrentDirectory, "Shaders", "skybox"));
-
+            
             frameBuffer = new FrameBuffer();
             GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, frameBuffer);
-
+            
             renderTexture = new Texture2D();
             GL.glBindTexture(GL.GL_TEXTURE_2D, renderTexture);
-            GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB, 400, 400, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, 0);
             GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
             GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-            
-            frameBuffer.AttactTexture(renderTexture);
-
+            GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB, 1, 1, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, 0);
+            frameBuffer.AttacthTexture(renderTexture);
             if (GL.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER) != GL.GL_FRAMEBUFFER_COMPLETE)
             {
                 throw new Exception("Cubemap framebuffer is not complete");
             }
-
             GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
-
-            GLDrawings.Execute += () =>
-            {
-                try
-                {
-                    var pitchQuat = Quaternion.CreateFromYawPitchRoll(0, pitch * MathF.PI / 180, 0);
-                    var rotation = pitchQuat * Quaternion.CreateFromYawPitchRoll(yaw * MathF.PI / 180, 0, 0);
-
-                    var viewMatrix = Matrix4x4.CreateFromQuaternion(rotation);
-                    var perspective = Matrix4x4.CreatePerspectiveFieldOfView(fov, 1, 0.1f, 100f);
-
-                    shader.Use();
-                    shader.SetMatrix("projection", perspective);
-                    shader.SetMatrix("view", viewMatrix);
-
-                    GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, frameBuffer);
-
-
-
-                    GL.glBindVertexArray(vao);
-                    GL.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, texture);
-                    GL.glDrawArrays(GL.GL_TRIANGLES, 0, 36);
-
-                    GL.glBindVertexArray(0);
-                    GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
-                } catch(Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            };
+            
         }
+        Vector2 lastSize;
+        Vector2 padding = new Vector2(20, 20);
+        Vector2 halfPadding = new Vector2(10, 10);
         public void Draw()
         {
-            var size = ImGui.GetWindowSize();
-            var minSize = MathF.Max(MathF.Min(size.X, size.Y) - 60, 80);
-            Vector2 offset = new Vector2(size.X / 2, size.Y / 2);
-
-            if (ImGui.IsMouseDown(ImGuiMouseButton.Left))
+            ImGui.BeginChild("container", Vector2.Zero, true);
+            var size = ImGui.GetWindowSize() - padding;
+            if(lastSize != size)
             {
-                var mouseDrag = ImGui.GetIO().MouseDelta / 10;
-                yaw += mouseDrag.X;
-                pitch += mouseDrag.Y;
-                //rotation *= Quaternion.CreateFromYawPitchRoll(mouseDrag.X, mouseDrag.Y, 0);
+                GL.glBindTexture(GL.GL_TEXTURE_2D, renderTexture);
+                GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB, (int)size.X, (int)size.Y, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, 0);
+                lastSize = size;
             }
-            fov += (ImGui.GetIO().MouseWheel / 50);
-            fov = Math.Clamp(fov, 0.1f, 3.13f);
+            var minSize = MathF.Max(MathF.Min(size.X, size.Y) - 60, 80);
 
-            //var drawList = ImGui.GetWindowDrawList();
+            if(ImGui.IsWindowHovered())
+            {
+                if (ImGui.IsMouseDown(ImGuiMouseButton.Middle))
+                {
+                    var mouseDrag = ImGui.GetIO().MouseDelta / 6 * standardFov;
+                    yaw -= mouseDrag.X;
+                    pitch -= mouseDrag.Y;
+                    pitch = (float)Math.Clamp(pitch, -90, 90);
+                    //rotation *= Quaternion.CreateFromYawPitchRoll(mouseDrag.X, mouseDrag.Y, 0);
+                    //ImGui.GetIO().WantSetMousePos = true;
+                    //ImGui.GetIO().MousePos = ImGui.GetIO().MousePosPrev;
+                }
+                fov += (ImGui.GetIO().MouseWheel / 50);
+                fov = Math.Clamp(fov, 0.1f, 3.13f);
+            }
+
+            var drawList = ImGui.GetWindowDrawList();
 
             int width = texture.Width;
             int height = texture.Height;
@@ -251,51 +260,88 @@ public class DirectXImageWindow : IWindow
                 height = (int)minSize;
                 width = (int)(width * scale);
             }
+            var pitchQuat = Quaternion.CreateFromYawPitchRoll(0, pitch * MathF.PI / 180, 0);
+            var rotation = pitchQuat * Quaternion.CreateFromYawPitchRoll(yaw * MathF.PI / 180, 0, 0);
+            
+            var viewMatrix = Matrix4x4.CreateFromQuaternion(rotation);
+            var perspective = Matrix4x4.CreatePerspectiveFieldOfView(fov, size.X/size.Y, 0.1f, 100f);
+            
+            
+            GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, frameBuffer);
+            GL.glClipControl(GL.GL_LOWER_LEFT, GL.GL_NEGATIVE_ONE_TO_ONE);
+            GL.glActiveTexture(GL.GL_TEXTURE0);
+            GL.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, texture);
+            shader.Use();
+            shader.SetMatrix("projection", perspective);
+            shader.SetMatrix("view", viewMatrix);
+            shader.SetInt("skybox", 0);
+            
+            GL.glBindVertexArray(vao);
+            
+            GL.glDisable(GL.GL_DEPTH_TEST);
+            GL.glViewport(0, 0, (int)size.X, (int)size.Y);
+            GL.glClearColor(0, 0, 0, 1);
+            GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+            GL.glDrawArrays(GL.GL_TRIANGLES, 0, 36);
+            
+            GL.glUseProgram(0);
+            GL.glBindVertexArray(0);
+            GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
 
-            ImGui.Image(texture, new Vector2(width, height));
+            ImGui.SetCursorPos(halfPadding);
+            ImGui.Image(renderTexture, new Vector2(size.X, size.Y));
+            ImGui.EndChild();
         }
+
+        public void Dispose()
+        {
+            GL.glDeleteFramebuffers(1, frameBuffer);
+            GL.glDeleteTextures(1, texture);
+            renderTexture.Dispose();
+        }
+
         float[] skyboxVertices = {
-    -1.0f,  1.0f, -1.0f,
-    -1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
+    -10.0f,  10.0f, -10.0f,
+    -10.0f, -10.0f, -10.0f,
+     10.0f, -10.0f, -10.0f,
+     10.0f, -10.0f, -10.0f,
+     10.0f,  10.0f, -10.0f,
+    -10.0f,  10.0f, -10.0f,
 
-    -1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
+    -10.0f, -10.0f,  10.0f,
+    -10.0f, -10.0f, -10.0f,
+    -10.0f,  10.0f, -10.0f,
+    -10.0f,  10.0f, -10.0f,
+    -10.0f,  10.0f,  10.0f,
+    -10.0f, -10.0f,  10.0f,
 
-     1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
+     10.0f, -10.0f, -10.0f,
+     10.0f, -10.0f,  10.0f,
+     10.0f,  10.0f,  10.0f,
+     10.0f,  10.0f,  10.0f,
+     10.0f,  10.0f, -10.0f,
+     10.0f, -10.0f, -10.0f,
 
-    -1.0f, -1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
+    -10.0f, -10.0f,  10.0f,
+    -10.0f,  10.0f,  10.0f,
+     10.0f,  10.0f,  10.0f,
+     10.0f,  10.0f,  10.0f,
+     10.0f, -10.0f,  10.0f,
+    -10.0f, -10.0f,  10.0f,
 
-    -1.0f,  1.0f, -1.0f,
-     1.0f,  1.0f, -1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f, -1.0f,
+    -10.0f,  10.0f, -10.0f,
+     10.0f,  10.0f, -10.0f,
+     10.0f,  10.0f,  10.0f,
+     10.0f,  10.0f,  10.0f,
+    -10.0f,  10.0f,  10.0f,
+    -10.0f,  10.0f, -10.0f,
 
-    -1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-     1.0f, -1.0f,  1.0f
+    -10.0f, -10.0f, -10.0f,
+    -10.0f, -10.0f,  10.0f,
+     10.0f, -10.0f, -10.0f,
+     10.0f, -10.0f, -10.0f,
+    -10.0f, -10.0f,  10.0f,
+     10.0f, -10.0f,  10.0f
 };
     }
 }

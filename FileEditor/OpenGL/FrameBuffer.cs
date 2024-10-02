@@ -16,7 +16,7 @@ public class FrameBuffer : IDisposable
         GL.glGenFramebuffers(1, out handle);
     }
 
-    public void AttactTexture(Texture2D texture)
+    public void AttacthTexture(Texture2D texture)
     {
         //GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, handle);
         GL.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D, texture, 0);

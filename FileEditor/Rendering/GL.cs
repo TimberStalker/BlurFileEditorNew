@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using static Editor.Rendering.GLFW;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 namespace Editor.Rendering
@@ -13,13 +14,14 @@ namespace Editor.Rendering
             FieldInfo[] fields = typeof(GL).GetFields(BindingFlags.NonPublic | BindingFlags.Static);
 
             for (int i = 0; i < fields.Length; i++) {
-                string name = fields[i].Name.Remove(0, 1);
+                string name = fields[i].Name[1..];
                 IntPtr ptr = GLFW.glfwGetProcAddress(name);
 
                 if (ptr != IntPtr.Zero)
                     fields[i].SetValue(null, Marshal.GetDelegateForFunctionPointer(ptr, fields[i].FieldType));
             }
         }
+        public static T GetProcAdress<T>(string name) => Marshal.GetDelegateForFunctionPointer<T>(glfwGetProcAddress(name));
 
         public const int GL_DEPTH_BUFFER_BIT = 0x00000100;
         public const int GL_STENCIL_BUFFER_BIT = 0x00000400;

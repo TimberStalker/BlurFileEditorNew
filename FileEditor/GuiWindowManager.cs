@@ -5,21 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Editor;
-public class WindowManager
+public class GuiWindowManager
 {
-    List<IWindow> windows = [];
-    List<IWindow> pendingWindows = [];
-    public void AddWindow(IWindow window)
+    List<GuiWindow> windows = [];
+    List<GuiWindow> pendingWindows = [];
+    public void AddWindow(GuiWindow window)
     {
         pendingWindows.Add(window);
     }
-    public void RemoveWindow(IWindow window)
+    public void RemoveWindow(GuiWindow window)
     {
         pendingWindows.Remove(window);
     }
     public void Draw()
     {
-        IWindow? removeWindow = null;
+        GuiWindow? removeWindow = null;
         foreach(var pendingWindow in pendingWindows)
         {
             windows.Add(pendingWindow);
