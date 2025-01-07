@@ -51,10 +51,10 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="SkiaSharp" Version="2.88.8" />
-      <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.8" />
-      <PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="2.88.8" />
-      <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
+      <PackageReference Include="SkiaSharp" Version="3.116.1" />
+      <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="3.116.1" />
+      <PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="3.116.1" />
+      <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
     </ItemGroup>
 
     <ItemGroup>

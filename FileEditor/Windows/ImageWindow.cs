@@ -12,7 +12,6 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Editor.Windows;
 public class ImageWindow : GuiWindow, IDisposable

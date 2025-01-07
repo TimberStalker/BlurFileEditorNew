@@ -73,7 +73,7 @@ namespace Editor.Drawers
             {
                 var attr = type.GetCustomAttribute<DrawAtribute>();
                 if (attr is null) continue;
-                Drawers[attr.TypeName] = (ITypeTitleDrawer)Activator.CreateInstance(type)!;
+                Drawers[attr.TypeName] = (ITypeDrawer)Activator.CreateInstance(type)!;
             }
         }
     }

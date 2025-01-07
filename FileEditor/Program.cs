@@ -58,8 +58,6 @@ namespace Editor
             new ImGuiController();
             ImGui.CreateContext();
 
-            _window.OnDraw += GLDrawings.Draw;
-
             _window.OnUpdate += () => {
                 ImGui.SetNextWindowPos(Vector2.Zero, ImGuiCond.Always);
                 ImGui.SetNextWindowSize(Window.Instance.WindowSize);
@@ -114,61 +112,5 @@ namespace Editor
             _window.Loop();
         }
         
-    }
-}
-static class GLDrawings
-{
-    public static Action? Execute;
-
-    public static void Draw()
-    {
-        if (Execute is null) return;
-
-        glGetIntegerv(GL_ACTIVE_TEXTURE, out int _lastActiveTexture);
-        glActiveTexture(GL_TEXTURE0);
-        glGetIntegerv(GL_CURRENT_PROGRAM, out int _lastProgram);
-        glGetIntegerv(GL_TEXTURE_BINDING_2D, out int _lastTexture);
-        glGetIntegerv(GL_SAMPLER_BINDING, out int _lastSampler);
-        glGetIntegerv(GL_VERTEX_ARRAY_BINDING, out int _lastVertexArrayObject);
-        glGetIntegerv(GL_ARRAY_BUFFER_BINDING, out int _lastArrayBuffer);
-        glGetIntegerv(GL_POLYGON_MODE, out int _lastPolygonMode);
-        glGetIntegerv(GL_VIEWPORT, out int _lastViewport);
-        glGetIntegerv(GL_SCISSOR_BOX, out int _lastScissorBox);
-        glGetIntegerv(GL_BLEND_SRC_RGB, out int _lastBlendSrcRgb);
-        glGetIntegerv(GL_BLEND_DST_RGB, out int _lastBlendDstRgb);
-        glGetIntegerv(GL_BLEND_SRC_ALPHA, out int _lastBlendSrcAlpha);
-        glGetIntegerv(GL_BLEND_DST_ALPHA, out int _lastBlendDstAlpha);
-        glGetIntegerv(GL_BLEND_EQUATION_RGB, out int _lastBlendEquationRgb);
-        glGetIntegerv(GL_BLEND_EQUATION_ALPHA, out int _lastBlendEquationAlpha);
-
-        //Keep track of the old stuff
-        bool _lastEnableBlend = glIsEnabled(GL_BLEND);
-        bool _lastEnableCullFace = glIsEnabled(GL_CULL_FACE);
-        bool _lastEnableDepthTest = glIsEnabled(GL_DEPTH_TEST);
-        bool _lastEnableStencilTest = glIsEnabled(GL_STENCIL_TEST);
-        bool _lastEnableScissorTest = glIsEnabled(GL_SCISSOR_TEST);
-        bool _lastEnablePrimitiveRestart = glIsEnabled(GL_PRIMITIVE_RESTART);
-
-        Execute();
-
-        glUseProgram((uint)_lastProgram);
-        glBindTexture(GL_TEXTURE_2D, (uint)_lastTexture);
-        glBindSampler(0, (uint)_lastSampler);
-        glActiveTexture((uint)_lastActiveTexture);
-        glBindVertexArray((uint)_lastVertexArrayObject);
-        glBindBuffer(GL_ARRAY_BUFFER, (uint)_lastArrayBuffer);
-        glBlendEquationSeparate((uint)_lastBlendEquationRgb, (uint)_lastBlendEquationAlpha);
-        glBlendFuncSeparate((uint)_lastBlendSrcRgb, (uint)_lastBlendDstRgb, (uint)_lastBlendSrcAlpha, (uint)_lastBlendDstAlpha);
-
-        if (_lastEnableBlend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
-        if (_lastEnableCullFace) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
-        if (_lastEnableDepthTest) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
-        if (_lastEnableStencilTest) glEnable(GL_STENCIL_TEST); else glDisable(GL_STENCIL_TEST);
-        if (_lastEnableScissorTest) glEnable(GL_SCISSOR_TEST); else glDisable(GL_SCISSOR_TEST);
-        if (_lastEnablePrimitiveRestart) glEnable(GL_PRIMITIVE_RESTART); else glDisable(GL_PRIMITIVE_RESTART);
-
-        glPolygonMode(GL_FRONT_AND_BACK, (uint)_lastPolygonMode);
-        glViewport(_lastViewport, _lastViewport, _lastViewport, _lastViewport);
-        glScissor(_lastScissorBox, _lastScissorBox, _lastScissorBox, _lastScissorBox);
     }
 }
