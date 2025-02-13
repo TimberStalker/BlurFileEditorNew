@@ -1,16 +1,18 @@
 ﻿using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml.Linq;
-using BlurFileFormats.XtFlask;
-using BlurFileFormats.XtFlask.Values;
+using BlurFileFormats.FlaskReflection;
 using Editor;
 using Editor.Drawers;
 using Editor.Windows;
+using GLib;
 using ImGuiNET;
+using Pango;
 
 public class XtEditorWindow : GuiWindow
 {
-    XtDb XtDb { get; }
+    XtDatabase XtDb { get; }
     public GuiWindowManager Manager { get; }
     string File { get; }
     string Name { get; }
@@ -27,36 +29,36 @@ public class XtEditorWindow : GuiWindow
         if (ImGui.Begin($"{Name}##{File}", ref open, ImGuiWindowFlags.NoCollapse))
         {
             ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(5, 5));
-            foreach (var item in XtDb.References)
+            foreach (var item in XtDb.Refs)
             {
-                var value = item.Value;
-                if (value == XtNullValue.Instance)
+                if(item is XtRef xtRef)
                 {
-                    ImGui.TreeNodeEx(item.Id.ToString(), ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap);
+                    DrawXtItem(XtDb, xtRef);
+                    //bool showContent = (ImGui.TreeNodeEx(item.Id.ToString(), ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap));
+                    ////if (ImGui.BeginPopupContextItem($"recordContext{item.Id}"))
+                    ////{
+                    ////    if (ImGui.MenuItem("View Ref As Node Graph"))
+                    ////    {
+                    ////        Manager.AddWindow(new XtRefGraph((XtRef)item));
+                    ////    }
+                    ////    ImGui.EndPopup();
+                    ////}
+                    //ImGui.SameLine();
+                    //ImGui.Text(item.Type.Name);
+                    //if (showContent)
+                    //{
+                    //    ShowXtValue(XtDb, value);
+                    //    ImGui.TreePop();
+                    //}
+                }
+                else
+                {
+                    ImGui.TreeNodeEx($"[{item.Id}]", ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap);
                     ImGui.SameLine();
                     ImGui.Text(item.Type.Name);
                     ImGui.SameLine();
                     ImGui.Text("External Data");
                     ImGui.TreePop();
-                }
-                else
-                {
-                    bool showContent = (ImGui.TreeNodeEx(item.Id.ToString(), ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap));
-                    if (ImGui.BeginPopupContextItem($"recordContext{item.Id}"))
-                    {
-                        if(ImGui.MenuItem("View Ref As Node Graph"))
-                        {
-                            Manager.AddWindow(new XtRefGraph((XtRef)item));
-                        }
-                        ImGui.EndPopup();
-                    }
-                    ImGui.SameLine();
-                    ImGui.Text(item.Type.Name);
-                    if (showContent)
-                    {
-                        ShowXtValue(XtDb, value);
-                        ImGui.TreePop();
-                    }
                 }
             }
             ImGui.PopStyleVar();
@@ -64,136 +66,277 @@ public class XtEditorWindow : GuiWindow
         }
         return open;
     }
-
-    static void ShowXtValue(XtDb xtDb, IXtValue xtValue)
+    static bool DrawHeader(XtDatabase xtDb, IXtValueItem item)
     {
-        if (xtValue is XtStructValue s)
+        string text = item switch
         {
-            foreach (var item in s.Values)
-            {
-                DrawField(xtDb, item);
-            }
-        }
-        else if (xtValue is XtArrayValue a)
+            XtRef value => $"[{value.Id}]",
+            XtFieldValueItem value => $"{value.Field.TargetType} {value.Field.Name}",
+            XtArrayItem value => $"[{value.Index}]",
+            _ => "Unknown"
+        };
+        if(item.Value is IXtValueContainer || 
+            item.Value is XtPointerValue p && p.Value is IXtValueContainer || 
+            item.Value is XtHandleValue h && h.XtRef is XtRef r && r.Value is IXtValueContainer || 
+            item.Value is XtArrayValue a && a.Array is not null)
         {
-            for (int i = 0; i < a.Values.Count; i++)
-            {
-                var value = a.Values[i];
-                DrawArrayItem(xtDb, i, value);
-            }
-            ImGui.Indent();
-            if(ImGui.Button("Add", new Vector2(180, 0)))
-            {
-                a.Values.Add(new XtArrayValueItem(a.Type.ElementType.CreateDefault()));
-            }
-            ImGui.Unindent();
-        }
-    }
-    private static bool DrawArrayItem(XtDb xtDb, int i, XtArrayValueItem value)
-    {
-        ImGuiTreeNodeFlags flags = default;
-        bool hasContent = TypeDrawer.HasContent(value.Value);
-        if (!hasContent)
-        {
-            flags = ImGuiTreeNodeFlags.Leaf;
-        }
-
-        bool showContent = ImGui.TreeNodeEx($"[{i}]", flags | ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap);
-        ImGui.SameLine();
-        ImGui.Text(value.Type.Name);
-
-        DrawTitleContent(xtDb, value.Value);
-        if (showContent)
-        {
-            DrawContent(xtDb, value.Value);
-            ImGui.TreePop();
-        }
-        return showContent;
-    }
-    public static bool DrawField(XtDb xtDb, XtStructValueItem item)
-    {
-        var field = item.Field;
-        var fieldValue = item.Value;
-
-        bool showContent = DrawFieldLabel(item);
-        DrawTitleContent(xtDb, fieldValue);
-        if (showContent)
-        {
-            DrawContent(xtDb, fieldValue);
-            ImGui.TreePop();
-        }
-        return showContent;
-    }
-
-    public static bool DrawFieldLabel(XtStructValueItem item, ImGuiTreeNodeFlags? overrideFlags = null)
-    {
-        var field = item.Field;
-        var fieldValue = item.Value;
-
-        bool hasContent = TypeDrawer.HasContent(fieldValue);
-
-        ImGuiTreeNodeFlags flags = default;
-        if (overrideFlags is ImGuiTreeNodeFlags f)
-        {
-            flags = f;
+            return ImGui.TreeNodeEx(text, ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap);
         }
         else
         {
-            if (!hasContent)
-            {
-                flags = ImGuiTreeNodeFlags.Leaf;
-            }
-        }
-        bool showContent = ImGui.TreeNodeEx(field.Name, flags | ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap, field.Type.Name);
-
-        ImGui.SameLine();
-        ImGui.Text(field.Name);
-
-        return showContent;
-    }
-
-    private static void DrawTitleContent(XtDb xtDb, IXtValue value)
-    {
-        if(value is IXtReferenceValue refVal)
-        {
-            value = refVal.Reference;
-        }
-        if (!TypeDrawer.DrawTitle(xtDb, value))
-        {
-            if (value is XtEnumValue v)
-            {
-                int c = (int)v.Value;
-                ImGui.SameLine();
-                ImGui.SetNextItemWidth(160);
-                ImGui.Combo("##enum", ref c, v.XtType.Labels.ToArray(), v.XtType.Labels.Count);
-                v.Value = (uint)c;
-            } else if(value is XtFlagsValue f)
-            {
-                uint c = f.Value;
-                ImGui.SameLine();
-                ImGui.SetNextItemWidth(160);
-                MultiCombo("##flags", ref c, f.XtType.Labels);
-                f.Value = c;
-            } else if(value is XtNullValue)
-            {
-                ImGui.SameLine();
-                ImGui.Text("null");
-            }
+            return ImGui.TreeNodeEx(text, ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap);
         }
     }
-    public static void DrawContent(XtDb xtDb, IXtValue value)
+    static void DrawXtItem(XtDatabase xtDb, IXtValueItem item)
     {
-        if (value is IXtReferenceValue refVal)
+        bool showContent = DrawHeader(xtDb, item);
+        ImGui.SameLine(0, 10);
+        ImGui.Text("=");
+        DrawValue(xtDb, item.Value);
+        if (showContent)
         {
-            DrawContent(xtDb, refVal.Reference);
-            return;
+            DrawContent(xtDb, item.Value);
+            ImGui.TreePop();
         }
-        if (!TypeDrawer.DrawContent(xtDb, value))
-        {
-            if (value is IXtMultiValue)
+    }
+    static void DrawContent(XtDatabase xtDb, IXtValue value)
+    {
+        if (value is XtStructValue v) {
+
+            foreach (var item in v)
             {
-                ShowXtValue(xtDb, value);
+                DrawXtItem(xtDb, item);
             }
+        } else if(value is XtPointerValue p && p.Value is IXtValueContainer pv)
+        {
+            foreach (var item in pv)
+            {
+                DrawXtItem(xtDb, item);
+            }
+        } else if(value is XtHandleValue h && h.XtRef is XtRef r && r.Value is IXtValueContainer hv)
+        {
+            foreach (var item in hv)
+            {
+                DrawXtItem(xtDb, item);
+            }
+        } else if(value is XtArrayValue a && a.Array is not null)
+        {
+            foreach (var item in a.Array)
+            {
+                DrawXtItem(xtDb, item);
+            }
+            if (ImGui.Button("Append"))
+            {
+                
+                a.Array.Add(a.Array.Type.BaseType.CreateValue());
+            }
+        }
+    }
+    static unsafe void DrawValue(XtDatabase xtDb, IXtValue value)
+    {
+        ImGui.SameLine(0, 10);
+        switch (value)
+        {
+            case XtAtomValue<bool> v:
+            {
+                ImGui.SetNextItemWidth(80);
+                bool edit = v.Value;
+                ImGui.Checkbox("##sbyte", ref edit);
+                v.Value = edit;
+                break;
+            }
+            case XtAtomValue<sbyte> v:
+            {
+                ImGui.SetNextItemWidth(80);
+                sbyte edit = v.Value;
+                ImGui.InputScalar("##sbyte", ImGuiDataType.S8, (nint)(&edit));
+                v.Value = edit;
+                break;
+            }
+            case XtAtomValue<short> v:
+            {
+                ImGui.SetNextItemWidth(80);
+                short edit = v.Value;
+                ImGui.InputScalar("##short", ImGuiDataType.S16, (nint)(&edit));
+                v.Value = edit;
+                break;
+            }
+            case XtAtomValue<int> v:
+            {
+                ImGui.SetNextItemWidth(80);
+                int edit = v.Value;
+                ImGui.InputScalar("##int", ImGuiDataType.S32, (nint)(&edit));
+                v.Value = edit;
+                break;
+            }
+            case XtAtomValue<long> v:
+            {
+                ImGui.SetNextItemWidth(80);
+                long edit = v.Value;
+                ImGui.InputScalar("##long", ImGuiDataType.S64, (nint)(&edit));
+                v.Value = edit;
+                break;
+            }
+            case XtAtomValue<byte> v:
+            {
+                ImGui.SetNextItemWidth(80);
+                byte edit = v.Value;
+                ImGui.InputScalar("##byte", ImGuiDataType.U8, (nint)(&edit));
+                v.Value = edit;
+                break;
+            }
+            case XtAtomValue<ushort> v:
+            {
+                ImGui.SetNextItemWidth(80);
+                ushort edit = v.Value;
+                ImGui.InputScalar("##ushort", ImGuiDataType.U16, (nint)(&edit));
+                v.Value = edit;
+                break;
+            }
+            case XtAtomValue<uint> v:
+            {
+                ImGui.SetNextItemWidth(80);
+                uint edit = v.Value;
+                ImGui.InputScalar("##uint", ImGuiDataType.U32, (nint)(&edit));
+                v.Value = edit;
+                break;
+            }
+            case XtAtomValue<ulong> v:
+            {
+                ImGui.SetNextItemWidth(80);
+                ulong edit = v.Value;
+                ImGui.InputScalar("##ulong", ImGuiDataType.U64, (nint)(&edit));
+                v.Value = edit;
+                break;
+            }
+            case XtAtomValue<float> v:
+            {
+                ImGui.SetNextItemWidth(80);
+                float edit = v.Value;
+                ImGui.InputScalar("##float", ImGuiDataType.Float, (nint)(&edit));
+                v.Value = edit;
+                break;
+            }
+            case XtAtomValue<decimal> v:
+            {
+                ImGui.SetNextItemWidth(80);
+                decimal edit = v.Value;
+                ImGui.InputScalar("##decimal", ImGuiDataType.Double, (nint)(&edit));
+                v.Value = edit;
+                break;
+            }
+            case XtAtomValue<string> v:
+            {
+                ImGui.PushItemWidth(460);
+                string edit = v.Value;
+                ImGui.InputText("##string", ref edit, 255);
+                v.Value = edit;
+                ImGui.PopItemWidth();
+                break;
+            }
+            case XtAtomValue<LocId> v:
+            {
+                ImGui.PushItemWidth(460);
+                uint edit = v.Value;
+                ImGui.InputScalar("##locid", ImGuiDataType.U32, (nint)(&edit));
+                v.Value = edit;
+                ImGui.PopItemWidth();
+                break;
+            }
+            case XtEnumValue v:
+                if(v.Type.IsFlags)
+                {
+                    ImGui.SetNextItemWidth(80);
+                    uint edit = v.Value;
+                    MultiCombo("##flags", ref edit, v.Type.Labels);
+                    v.Value = edit;
+                }
+                else
+                {
+                    ImGui.SetNextItemWidth(80);
+                    int edit = (int)v.Value;
+                    ImGui.Combo("##enum", ref edit, string.Join('\0', v.Type.Labels));
+                    v.Value = (uint)edit;
+                }
+                break;
+            case XtStructValue v:
+
+                ImGui.SetNextItemWidth(80);
+                ImGui.Text($"({v.Type.Name}){v.GetHashCode()}");
+                break;
+            case XtPointerValue v:
+
+                if(v.Value is null)
+                {
+                    if (ImGui.Button("new", new Vector2(80, 0)))
+                    {
+                        ImGui.OpenPopup("newPop");
+                    }
+                    if(ImGui.BeginPopup("newPop"))
+                    {
+                        foreach (var item in xtDb.Types.Where(t => t == v.Type.BaseType || (t is XtStructType st && v.Type.BaseType is XtStructType pt && st.IsOfType(pt))))
+                        {
+                            if (ImGui.Button(item.Name))
+                            {
+                                v.Value = item.CreateValue();
+                            }
+                        }
+                        ImGui.EndPopup();
+                    }
+                    ImGui.SameLine(0, 5);
+                    if (ImGui.Button("use", new Vector2(80, 0)))
+                    {
+
+                    }
+                }
+                else
+                {
+                    DrawValue(xtDb, v.Value);
+                }
+                break;
+            case XtHandleValue v:
+
+                ImGui.SetNextItemWidth(80);
+                if(v.XtRef is null)
+                {
+                    if (ImGui.Button("new", new Vector2(80, 0)))
+                    {
+                        
+                    }
+                    ImGui.SameLine(0, 5);
+                    if (ImGui.Button("use", new Vector2(80, 0)))
+                    {
+
+                    }
+                }
+                else
+                {
+                    ImGui.Text($"({v.XtRef.Type})[{v.XtRef.GetHashCode()}]");
+                }
+                break;
+            case XtArrayValue v:
+
+                ImGui.SetNextItemWidth(80);
+                if (v.Array is null)
+                {
+                    if(ImGui.Button("new", new Vector2(80, 0)))
+                    {
+                        v.Array = new XtArray(v.Type);
+                    }
+                    ImGui.SameLine(0, 5);
+                    if (ImGui.Button("use", new Vector2(80, 0)))
+                    {
+
+                    }
+                }
+                else
+                {
+                    ImGui.Text($"({v.Array.Type}){v.Array.GetHashCode()}[{v.Array.Count}]");
+                }
+                break;
+            default:
+                ImGui.Text("Not Implemented");
+                break;
         }
     }
     static void MultiCombo(string label, ref uint flags, IEnumerable<string> flagNames)

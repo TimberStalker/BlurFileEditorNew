@@ -39,50 +39,50 @@ namespace Editor.Drawers
 
                 ImGui.PushItemWidth(80);
 
-                if (XtEditorWindow.DrawFieldLabel(rItem))
-                {
-                    var rValue = (XtAtomValue<float>)rItem.Value;
-                    float r = rValue.Value;
-
-                    ImGui.SameLine();
-                    ImGui.DragFloat("##r", ref r, 0.001f, 0, 1);
-
-                    rValue.Value = r;
-                    ImGui.TreePop();
-                }
-                if (XtEditorWindow.DrawFieldLabel(gItem))
-                {
-                    var gValue = (XtAtomValue<float>)gItem.Value;
-                    float g = gValue.Value;
-
-                    ImGui.SameLine();
-                    ImGui.DragFloat("##g", ref g, 0.001f, 0, 1);
-
-                    gValue.Value = g;
-                    ImGui.TreePop();
-                }
-                if (XtEditorWindow.DrawFieldLabel(bItem))
-                {
-                    var bValue = (XtAtomValue<float>)bItem.Value;
-                    float b = bValue.Value;
-
-                    ImGui.SameLine();
-                    ImGui.DragFloat("##b", ref b, 0.001f, 0, 1);
-
-                    bValue.Value = b;
-                    ImGui.TreePop();
-                }
-                if (XtEditorWindow.DrawFieldLabel(aItem))
-                {
-                    var aValue = (XtAtomValue<float>)aItem.Value;
-                    float a = aValue.Value;
-
-                    ImGui.SameLine();
-                    ImGui.DragFloat("##a", ref a, 0.001f, 0, 1);
-
-                    aValue.Value = a;
-                    ImGui.TreePop();
-                }
+                //if (XtEditorWindow.DrawFieldLabel(rItem))
+                //{
+                //    var rValue = (XtAtomValue<float>)rItem.Value;
+                //    float r = rValue.Value;
+                //
+                //    ImGui.SameLine();
+                //    ImGui.DragFloat("##r", ref r, 0.001f, 0, 1);
+                //
+                //    rValue.Value = r;
+                //    ImGui.TreePop();
+                //}
+                //if (XtEditorWindow.DrawFieldLabel(gItem))
+                //{
+                //    var gValue = (XtAtomValue<float>)gItem.Value;
+                //    float g = gValue.Value;
+                //
+                //    ImGui.SameLine();
+                //    ImGui.DragFloat("##g", ref g, 0.001f, 0, 1);
+                //
+                //    gValue.Value = g;
+                //    ImGui.TreePop();
+                //}
+                //if (XtEditorWindow.DrawFieldLabel(bItem))
+                //{
+                //    var bValue = (XtAtomValue<float>)bItem.Value;
+                //    float b = bValue.Value;
+                //
+                //    ImGui.SameLine();
+                //    ImGui.DragFloat("##b", ref b, 0.001f, 0, 1);
+                //
+                //    bValue.Value = b;
+                //    ImGui.TreePop();
+                //}
+                //if (XtEditorWindow.DrawFieldLabel(aItem))
+                //{
+                //    var aValue = (XtAtomValue<float>)aItem.Value;
+                //    float a = aValue.Value;
+                //
+                //    ImGui.SameLine();
+                //    ImGui.DragFloat("##a", ref a, 0.001f, 0, 1);
+                //
+                //    aValue.Value = a;
+                //    ImGui.TreePop();
+                //}
 
                 ImGui.PopItemWidth();
             }
