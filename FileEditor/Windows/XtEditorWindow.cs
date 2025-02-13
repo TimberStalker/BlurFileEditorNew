@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml.Linq;
@@ -28,12 +29,25 @@ public class XtEditorWindow : GuiWindow
         bool open = true;
         if (ImGui.Begin($"{Name}##{File}", ref open, ImGuiWindowFlags.NoCollapse))
         {
+
+            if(ImGui.IsWindowFocused(ImGuiFocusedFlags.RootAndChildWindows))
+            {
+                var io = ImGui.GetIO();
+                if(io.KeyCtrl)
+                {
+                    if (ImGui.IsKeyReleased('S'))
+                    {
+                        Flask.Export(XtDb, File);
+                        //Debug.WriteLine("save");
+                    }
+                }
+            }
             ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(5, 5));
             foreach (var item in XtDb.Refs)
             {
                 if(item is XtRef xtRef)
                 {
-                    DrawXtItem(XtDb, xtRef);
+                    DrawXtItem(XtDb, xtRef, xtRef);
                     //bool showContent = (ImGui.TreeNodeEx(item.Id.ToString(), ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap));
                     ////if (ImGui.BeginPopupContextItem($"recordContext{item.Id}"))
                     ////{
@@ -62,11 +76,17 @@ public class XtEditorWindow : GuiWindow
                 }
             }
             ImGui.PopStyleVar();
+
+
             ImGui.End();
         }
         return open;
     }
-    static bool DrawHeader(XtDatabase xtDb, IXtValueItem item)
+    static bool HasContent(IXtValue value) => value is IXtValueContainer ||
+            value is XtPointerValue p && p.Value is IXtValueContainer ||
+            value is XtHandleValue h && h.XtRef is XtRef r && r.Value is IXtValueContainer ||
+            value is XtArrayValue a && a.Array is not null;
+    static bool DrawHeader(XtDatabase xtDb, IXtValueItem item, XtRef reference)
     {
         string text = item switch
         {
@@ -75,10 +95,7 @@ public class XtEditorWindow : GuiWindow
             XtArrayItem value => $"[{value.Index}]",
             _ => "Unknown"
         };
-        if(item.Value is IXtValueContainer || 
-            item.Value is XtPointerValue p && p.Value is IXtValueContainer || 
-            item.Value is XtHandleValue h && h.XtRef is XtRef r && r.Value is IXtValueContainer || 
-            item.Value is XtArrayValue a && a.Array is not null)
+        if(HasContent(item.Value))
         {
             return ImGui.TreeNodeEx(text, ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap);
         }
@@ -87,52 +104,73 @@ public class XtEditorWindow : GuiWindow
             return ImGui.TreeNodeEx(text, ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap);
         }
     }
-    static void DrawXtItem(XtDatabase xtDb, IXtValueItem item)
+    static void DrawXtItem(XtDatabase xtDb, IXtValueItem item, XtRef reference)
     {
-        bool showContent = DrawHeader(xtDb, item);
+        bool showContent = DrawHeader(xtDb, item, reference);
+        if(item.Value is XtPointerValue or XtHandleValue or XtArrayValue)
+        {
+            if (ImGui.BeginPopupContextItem($"itemContext{item.GetHashCode()}"))
+            {
+                if (ImGui.MenuItem("Clear"))
+                {
+                    switch(item.Value)
+                    {
+                        case XtPointerValue pointerValue:
+                            pointerValue.Value = null;
+                            break;
+                        case XtHandleValue handleValue:
+                            handleValue.XtRef = null;
+                            break;
+                        case XtArrayValue arrayValue:
+                            arrayValue.Array = null;
+                            break;
+                    }
+                }
+                ImGui.EndPopup();
+            }
+        }
         ImGui.SameLine(0, 10);
         ImGui.Text("=");
-        DrawValue(xtDb, item.Value);
+        DrawValue(xtDb, item.Value, reference);
         if (showContent)
         {
-            DrawContent(xtDb, item.Value);
+            DrawContent(xtDb, item.Value, reference);
             ImGui.TreePop();
         }
     }
-    static void DrawContent(XtDatabase xtDb, IXtValue value)
+    static void DrawContent(XtDatabase xtDb, IXtValue value, XtRef reference)
     {
         if (value is XtStructValue v) {
 
             foreach (var item in v)
             {
-                DrawXtItem(xtDb, item);
+                DrawXtItem(xtDb, item, reference);
             }
         } else if(value is XtPointerValue p && p.Value is IXtValueContainer pv)
         {
             foreach (var item in pv)
             {
-                DrawXtItem(xtDb, item);
+                DrawXtItem(xtDb, item, reference);
             }
         } else if(value is XtHandleValue h && h.XtRef is XtRef r && r.Value is IXtValueContainer hv)
         {
             foreach (var item in hv)
             {
-                DrawXtItem(xtDb, item);
+                DrawXtItem(xtDb, item, reference);
             }
         } else if(value is XtArrayValue a && a.Array is not null)
         {
             foreach (var item in a.Array)
             {
-                DrawXtItem(xtDb, item);
+                DrawXtItem(xtDb, item, reference);
             }
             if (ImGui.Button("Append"))
             {
-                
                 a.Array.Add(a.Array.Type.BaseType.CreateValue());
             }
         }
     }
-    static unsafe void DrawValue(XtDatabase xtDb, IXtValue value)
+    static unsafe void DrawValue(XtDatabase xtDb, IXtValue value, XtRef reference)
     {
         ImGui.SameLine(0, 10);
         switch (value)
@@ -286,12 +324,40 @@ public class XtEditorWindow : GuiWindow
                     ImGui.SameLine(0, 5);
                     if (ImGui.Button("use", new Vector2(80, 0)))
                     {
-
+                        ImGui.OpenPopup("usePop");
+                    }
+                    if (ImGui.BeginPopup("usePop"))
+                    {
+                        ImGui.BeginChild("usePopScroll", new Vector2(800, 200));
+                        foreach (var heapValue in reference.RefHeap.Where(t => t.Type == v.Type.BaseType || (t.Type is XtStructType st && v.Type.BaseType is XtStructType pt && st.IsOfType(pt))))
+                        {
+                            bool showContent = false;
+                            if (HasContent(heapValue))
+                            {
+                                showContent = ImGui.TreeNodeEx($"({heapValue.Type}){heapValue.GetHashCode()}", ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap);
+                            }
+                            else
+                            {
+                                showContent = ImGui.TreeNodeEx($"({heapValue.Type}){heapValue.GetHashCode()}", ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap);
+                            }
+                            ImGui.SameLine();
+                            if (ImGui.Button("add"))
+                            {
+                                v.Value = heapValue;
+                            }
+                            if(showContent)
+                            {
+                                DrawContent(xtDb, heapValue, reference);
+                                ImGui.TreePop();
+                            }
+                        }
+                        ImGui.EndChild();
+                        ImGui.EndPopup();
                     }
                 }
                 else
                 {
-                    DrawValue(xtDb, v.Value);
+                    DrawValue(xtDb, v.Value, reference);
                 }
                 break;
             case XtHandleValue v:
