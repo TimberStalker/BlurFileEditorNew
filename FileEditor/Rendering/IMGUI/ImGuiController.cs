@@ -497,8 +497,11 @@ namespace Editor.Rendering.IMGUI {
 
         /// <inheritdoc cref="GLFW.glfwSetKeyCallback"/>
         private void KeyCallback(IntPtr _, int _key, int _scanCode, int _action, int _mods) {
-            if (_action == GLFW_PRESS) io.KeysDown[_key] = true;
-            else if (_action == GLFW_RELEASE) io.KeysDown[_key] = false;
+            if(_key != -1)
+            {
+                if (_action == GLFW_PRESS) io.KeysDown[_key] = true;
+                else if (_action == GLFW_RELEASE) io.KeysDown[_key] = false;
+            }
             
             io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
             io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
