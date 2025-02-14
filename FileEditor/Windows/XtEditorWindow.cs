@@ -20,6 +20,7 @@ public class XtEditorWindow : GuiWindow
     string Name { get; }
     List<UndoCommand> commandBuffer = new(5);
     HistoryQueue<UndoCommand> historyQueue = new(128);
+    int changeCount = 0;
     public XtEditorWindow(GuiWindowManager manager, string path)
     {
         XtDb = Flask.Import(path);
@@ -30,7 +31,7 @@ public class XtEditorWindow : GuiWindow
     public unsafe bool Draw()
     {
         bool open = true;
-        if (ImGui.Begin($"{Name}##{File}", ref open, ImGuiWindowFlags.NoCollapse))
+        if (ImGui.Begin(changeCount != 0 ? $"{Name}*###{File}" : $"{Name}###{File}", ref open, ImGuiWindowFlags.NoCollapse))
         {
 
             if(ImGui.IsWindowFocused(ImGuiFocusedFlags.RootAndChildWindows))
@@ -41,6 +42,7 @@ public class XtEditorWindow : GuiWindow
                     if (ImGui.IsKeyReleased('S'))
                     {
                         Flask.Export(XtDb, File);
+                        changeCount = 0;
                         //Debug.WriteLine("save");
                     }
                     if (ImGui.IsKeyReleased('Z'))
@@ -50,6 +52,7 @@ public class XtEditorWindow : GuiWindow
                             if(historyQueue.TryConsume(out var command))
                             {
                                 command.Do();
+                                changeCount++;
                             }
                         }
                         else
@@ -57,6 +60,7 @@ public class XtEditorWindow : GuiWindow
                             if(historyQueue.TryPop(out var command))
                             {
                                 command.Undo();
+                                changeCount--;
                             }
                         }
                     }
@@ -91,12 +95,16 @@ public class XtEditorWindow : GuiWindow
             }
             ImGui.PopStyleVar();
 
-            for(int i = 0; i < commandBuffer.Count; i++)
+            if(commandBuffer.Count > 0)
             {
-                commandBuffer[i].Do();
-                historyQueue.Push(commandBuffer[i]);
+                for(int i = 0; i < commandBuffer.Count; i++)
+                {
+                    commandBuffer[i].Do();
+                    historyQueue.Push(commandBuffer[i]);
+                }
+                changeCount += commandBuffer.Count;
+                commandBuffer.Clear();
             }
-            commandBuffer.Clear();
 
             ImGui.End();
         }
@@ -407,7 +415,7 @@ public class XtEditorWindow : GuiWindow
                         {
                             if (ImGui.Button(item.Name))
                             {
-                                commandBuffer.Add(UndoCommand.Create((v, item.CreateValue()), b => b.v.Value = b.Item2, b => b.v.Value = null));
+                                commandBuffer.Add(UndoCommand.Create((target: v, item: item.CreateValue(), reference), b => { b.target.Value = b.item; b.reference.RefHeap.Add(b.item); }, b => { b.target.Value = null; b.reference.RefHeap.Remove(b.item); }));
                             }
                         }
                         ImGui.EndPopup();
@@ -434,7 +442,7 @@ public class XtEditorWindow : GuiWindow
                             ImGui.SameLine();
                             if (ImGui.Button("add"))
                             {
-                                commandBuffer.Add(UndoCommand.Create((v, heapValue), b => b.v.Value = b.heapValue, b => b.v.Value = null));
+                                commandBuffer.Add(UndoCommand.Create((target: v, item: heapValue), b => b.target.Value = b.item, b => b.target.Value = null));
                             }
                             if(showContent)
                             {
@@ -478,7 +486,7 @@ public class XtEditorWindow : GuiWindow
                 {
                     if(ImGui.Button("new", new Vector2(80, 0)))
                     {
-                        commandBuffer.Add(UndoCommand.Create((target: v, array: new XtArray(v.Type)), b => b.target.Array = b.array, b => b.target.Array = null));
+                        commandBuffer.Add(UndoCommand.Create((target: v, array: new XtArray(v.Type), reference), b => { b.target.Array = b.array; reference.RefHeap.Add(b.array); }, b => { b.target.Array = null; reference.RefHeap.Remove(b.array); }));
                     }
                     ImGui.SameLine(0, 5);
                     if (ImGui.Button("use", new Vector2(80, 0)))
