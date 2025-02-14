@@ -110,9 +110,9 @@ public class XtEditorWindow : GuiWindow
         }
         return open;
     }
-    public static bool HasContent(IXtValue value) => value is IXtValueContainer ||
-            value is XtPointerValue p && p.Value is IXtValueContainer ||
-            value is XtHandleValue h && h.XtRef is XtRef r && r.Value is IXtValueContainer ||
+    public static bool HasContent(IXtValue value) => value is XtStructValue ||
+            value is XtPointerValue p && p.Value is XtStructValue ||
+            value is XtHandleValue h && h.XtRef is XtRef r && r.Value is XtStructValue ||
             value is XtArrayValue a && a.Array is not null;
     public static bool DrawHeader(XtDatabase xtDb, IXtValueItem item, XtRef reference)
     {
@@ -458,7 +458,7 @@ public class XtEditorWindow : GuiWindow
                     }
                     if (ImGui.BeginPopup("usePop"))
                     {
-                        ImGui.BeginChild("usePopScroll", new Vector2(800, 200));
+                        ImGui.BeginChild("usePopScroll", new Vector2(600, 200), false, ImGuiWindowFlags.AlwaysAutoResize);
                         foreach (var heapValue in reference.RefHeap.Where(t => t.Type == v.Type.BaseType || (t.Type is XtStructType st && v.Type.BaseType is XtStructType pt && st.IsOfType(pt))))
                         {
                             bool showContent = false;
