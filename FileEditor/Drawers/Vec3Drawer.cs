@@ -1,117 +1,78 @@
-﻿using BlurFileFormats.XtFlask.Values;
+﻿using BlurFileFormats.FlaskReflection;
+using GLib;
 using ImGuiNET;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Editor.Drawers
 {
     [DrawAtribute("Vec3")]
-    public class Vec3Drawer : ITypeTitleDrawer
+    public class Vec3Drawer
     {
-        public void Draw(BlurFileFormats.XtFlask.XtDb xtDb, IXtValue xtValue)
+        public void DrawValue(XtDatabase xtDb, XtStructValue value, XtRef reference, IList<UndoCommand> commandBuffer)
         {
-            if (xtValue is XtStructValue s)
-            {
-                var xAtom = (XtAtomValue<float>)s.GetField("vx");
-                var yAtom = (XtAtomValue<float>)s.GetField("vy");
-                var zAtom = (XtAtomValue<float>)s.GetField("vz");
+            var xItem = value.GetFieldItem("vx");
+            var yItem = value.GetFieldItem("vy");
+            var zItem = value.GetFieldItem("vz");
 
-                float x = xAtom.Value;
-                float y = yAtom.Value;
-                float z = zAtom.Value;
-                ImGui.PushItemWidth(60);
+            ImGui.Text("(");
 
-                ImGui.SameLine();
-                ImGui.Text("(");
+            ImGui.SameLine(0, 0);
+            XtEditorWindow.DrawValue(xtDb, xItem.Value, reference, commandBuffer);
 
-                ImGui.SameLine();
-                ImGui.InputFloat("##X", ref x);
+            ImGui.SameLine(0, 0);
+            ImGui.Text(",");
 
-                ImGui.SameLine();
-                ImGui.Text(",");
+            ImGui.SameLine(0, 0);
+            XtEditorWindow.DrawValue(xtDb, yItem.Value, reference, commandBuffer);
 
-                ImGui.SameLine();
-                ImGui.InputFloat("##Y", ref y);
+            ImGui.SameLine(0, 0);
+            ImGui.Text(",");
 
-                ImGui.SameLine();
-                ImGui.Text(",");
+            ImGui.SameLine(0, 0);
+            XtEditorWindow.DrawValue(xtDb, zItem.Value, reference, commandBuffer);
 
-                ImGui.SameLine();
-                ImGui.InputFloat("##Z", ref z);
-
-                ImGui.SameLine();
-                ImGui.Text(")");
-
-                ImGui.PopItemWidth();
-
-                xAtom.Value = x;
-                yAtom.Value = y;
-                zAtom.Value = z;
-            }
+            ImGui.SameLine();
+            ImGui.Text(")");
         }
     }
     [DrawAtribute("Vec2")]
-    public class Vec2Drawer : ITypeTitleDrawer
+    public class Vec2Drawer
     {
-        public void Draw(BlurFileFormats.XtFlask.XtDb xtDb, IXtValue xtValue)
+        public void DrawValue(XtDatabase xtDb, XtStructValue value, XtRef reference, IList<UndoCommand> commandBuffer)
         {
-            if (xtValue is XtStructValue s)
-            {
-                var xAtom = (XtAtomValue<float>)s.GetField("vx");
-                var yAtom = (XtAtomValue<float>)s.GetField("vy");
+            var xItem = value.GetFieldItem("vx");
+            var yItem = value.GetFieldItem("vy");
 
-                float x = xAtom.Value;
-                float y = yAtom.Value;
-                ImGui.PushItemWidth(60);
+            ImGui.Text("(");
 
-                ImGui.SameLine();
-                ImGui.Text("(");
+            ImGui.SameLine(0, 0);
+            XtEditorWindow.DrawValue(xtDb, xItem.Value, reference, commandBuffer);
 
-                ImGui.SameLine();
-                ImGui.InputFloat("##X", ref x);
+            ImGui.SameLine(0, 0);
+            ImGui.Text(",");
 
-                ImGui.SameLine();
-                ImGui.Text(",");
+            ImGui.SameLine(0, 0);
+            XtEditorWindow.DrawValue(xtDb, yItem.Value, reference, commandBuffer);
 
-                ImGui.SameLine();
-                ImGui.InputFloat("##Y", ref y);
-
-                ImGui.SameLine();
-                ImGui.Text(")");
-
-                ImGui.PopItemWidth();
-
-                xAtom.Value = x;
-                yAtom.Value = y;
-            }
+            ImGui.SameLine();
+            ImGui.Text(")");
         }
     }
     [DrawAtribute("RangeI8")]
-    public class RangeI8Drawer : ITypeTitleDrawer
+    public class RangeI8Drawer
     {
-        public unsafe void Draw(BlurFileFormats.XtFlask.XtDb xtDb, IXtValue xtValue)
+        public void DrawValue(XtDatabase xtDb, XtStructValue value, XtRef reference, IList<UndoCommand> commandBuffer)
         {
-            if (xtValue is XtStructValue s)
-            {
-                var fromAtom = (XtAtomValue<sbyte>)s.GetField("from");
-                var toAtom = (XtAtomValue<sbyte>)s.GetField("to");
+            var fromItem = value.GetFieldItem("from");
+            var toItem = value.GetFieldItem("to");
 
-                sbyte from = fromAtom.Value;
-                sbyte to = toAtom.Value;
-                ImGui.PushItemWidth(60);
+            XtEditorWindow.DrawValue(xtDb, fromItem.Value, reference, commandBuffer);
 
-                ImGui.SameLine();
-                ImGui.InputScalar("##from", ImGuiDataType.S8, (nint)(&from));
+            ImGui.SameLine(0, 0);
+            ImGui.Text("-");
 
-                ImGui.SameLine();
-                ImGui.Text("-");
-
-                ImGui.SameLine();
-                ImGui.InputScalar("##to", ImGuiDataType.S8, (nint)(&to));
-
-                ImGui.PopItemWidth();
-
-                fromAtom.Value = from;
-                toAtom.Value = to;
-            }
+            ImGui.SameLine(0, 0);
+            XtEditorWindow.DrawValue(xtDb, toItem.Value, reference, commandBuffer);
         }
     }
 }

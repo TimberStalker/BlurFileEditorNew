@@ -110,11 +110,11 @@ public class XtEditorWindow : GuiWindow
         }
         return open;
     }
-    static bool HasContent(IXtValue value) => value is IXtValueContainer ||
+    public static bool HasContent(IXtValue value) => value is IXtValueContainer ||
             value is XtPointerValue p && p.Value is IXtValueContainer ||
             value is XtHandleValue h && h.XtRef is XtRef r && r.Value is IXtValueContainer ||
             value is XtArrayValue a && a.Array is not null;
-    static bool DrawHeader(XtDatabase xtDb, IXtValueItem item, XtRef reference)
+    public static bool DrawHeader(XtDatabase xtDb, IXtValueItem item, XtRef reference)
     {
         string text = item switch
         {
@@ -132,7 +132,7 @@ public class XtEditorWindow : GuiWindow
             return ImGui.TreeNodeEx(text, ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap);
         }
     }
-    static void DrawXtItem(XtDatabase xtDb, IXtValueItem item, XtRef reference, IList<UndoCommand> commandBuffer)
+    public static void DrawXtItem(XtDatabase xtDb, IXtValueItem item, XtRef reference, IList<UndoCommand> commandBuffer)
     {
         bool showContent = DrawHeader(xtDb, item, reference);
         if(item.Value is XtPointerValue or XtHandleValue or XtArrayValue)
@@ -178,7 +178,7 @@ public class XtEditorWindow : GuiWindow
             ImGui.TreePop();
         }
     }
-    static void DrawContent(XtDatabase xtDb, IXtValue value, XtRef reference, IList<UndoCommand> commandBuffer)
+    public static void DrawContent(XtDatabase xtDb, IXtValue value, XtRef reference, IList<UndoCommand> commandBuffer)
     {
         if (value is XtStructValue v) {
             var values = CollectionsMarshal.AsSpan(v.Values);
@@ -222,16 +222,21 @@ public class XtEditorWindow : GuiWindow
             }
         }
     }
-    static unsafe void DrawValue(XtDatabase xtDb, IXtValue value, XtRef reference, IList<UndoCommand> commandBuffer)
+    public static unsafe void DrawValue(XtDatabase xtDb, IXtValue value, XtRef reference, IList<UndoCommand> commandBuffer)
     {
         ImGui.SameLine(0, 10);
+        if(TypeDrawer.HasDrawer(value))
+        {
+            TypeDrawer.Draw(xtDb, value, reference, commandBuffer);
+            return;
+        }
         switch (value)
         {
             case XtAtomValue<bool> v:
             {
                 ImGui.SetNextItemWidth(80);
                 bool edit = v.Value;
-                if (ImGui.Checkbox("##sbyte", ref edit))
+                if (ImGui.Checkbox($"##sbyte{v.GetHashCode()}", ref edit))
                 {
                     commandBuffer.Add(UndoCommand.Create((target: v, newValue: edit, oldValue: v.Value), 
                         b => b.target.Value = b.newValue, 
@@ -244,7 +249,7 @@ public class XtEditorWindow : GuiWindow
             {
                 ImGui.SetNextItemWidth(80);
                 sbyte edit = v.Value;
-                if (ImGui.InputScalar("##sbyte", ImGuiDataType.S8, (nint)(&edit)))
+                if (ImGui.InputScalar($"##sbyte{v.GetHashCode()}", ImGuiDataType.S8, (nint)(&edit)))
                 {
                     commandBuffer.Add(UndoCommand.Create((target: v, newValue: edit, oldValue: v.Value), 
                         b => b.target.Value = b.newValue, 
@@ -257,7 +262,7 @@ public class XtEditorWindow : GuiWindow
             {
                 ImGui.SetNextItemWidth(80);
                 short edit = v.Value;
-                if (ImGui.InputScalar("##short", ImGuiDataType.S16, (nint)(&edit)))
+                if (ImGui.InputScalar($"##short{v.GetHashCode()}", ImGuiDataType.S16, (nint)(&edit)))
                 {
                     commandBuffer.Add(UndoCommand.Create((target: v, newValue: edit, oldValue: v.Value), 
                         b => b.target.Value = b.newValue, 
@@ -270,7 +275,7 @@ public class XtEditorWindow : GuiWindow
             {
                 ImGui.SetNextItemWidth(80);
                 int edit = v.Value;
-                if (ImGui.InputScalar("##int", ImGuiDataType.S32, (nint)(&edit)))
+                if (ImGui.InputScalar($"##int{v.GetHashCode()}", ImGuiDataType.S32, (nint)(&edit)))
                 {
                     commandBuffer.Add(UndoCommand.Create((target: v, newValue: edit, oldValue: v.Value), 
                         b => b.target.Value = b.newValue, 
@@ -283,7 +288,7 @@ public class XtEditorWindow : GuiWindow
             {
                 ImGui.SetNextItemWidth(80);
                 long edit = v.Value;
-                if (ImGui.InputScalar("##long", ImGuiDataType.S64, (nint)(&edit)))
+                if (ImGui.InputScalar($"##long{v.GetHashCode()}", ImGuiDataType.S64, (nint)(&edit)))
                 {
                     commandBuffer.Add(UndoCommand.Create((target: v, newValue: edit, oldValue: v.Value), 
                         b => b.target.Value = b.newValue, 
@@ -296,7 +301,7 @@ public class XtEditorWindow : GuiWindow
             {
                 ImGui.SetNextItemWidth(80);
                 byte edit = v.Value;
-                if (ImGui.InputScalar("##byte", ImGuiDataType.U8, (nint)(&edit)))
+                if (ImGui.InputScalar($"##byte{v.GetHashCode()}", ImGuiDataType.U8, (nint)(&edit)))
                 {
                     commandBuffer.Add(UndoCommand.Create((target: v, newValue: edit, oldValue: v.Value), 
                         b => b.target.Value = b.newValue, 
@@ -309,7 +314,7 @@ public class XtEditorWindow : GuiWindow
             {
                 ImGui.SetNextItemWidth(80);
                 ushort edit = v.Value;
-                if (ImGui.InputScalar("##ushort", ImGuiDataType.U16, (nint)(&edit)))
+                if (ImGui.InputScalar($"##ushort{v.GetHashCode()}", ImGuiDataType.U16, (nint)(&edit)))
                 {
                     commandBuffer.Add(UndoCommand.Create((target: v, newValue: edit, oldValue: v.Value), 
                         b => b.target.Value = b.newValue, 
@@ -322,7 +327,7 @@ public class XtEditorWindow : GuiWindow
             {
                 ImGui.SetNextItemWidth(80);
                 uint edit = v.Value;
-                if (ImGui.InputScalar("##uint", ImGuiDataType.U32, (nint)(&edit)))
+                if (ImGui.InputScalar($"##uint{v.GetHashCode()}", ImGuiDataType.U32, (nint)(&edit)))
                 {
                     commandBuffer.Add(UndoCommand.Create((target: v, newValue: edit, oldValue: v.Value), 
                         b => b.target.Value = b.newValue,
@@ -335,7 +340,7 @@ public class XtEditorWindow : GuiWindow
             {
                 ImGui.SetNextItemWidth(80);
                 ulong edit = v.Value;
-                if (ImGui.InputScalar("##ulong", ImGuiDataType.U64, (nint)(&edit)))
+                if (ImGui.InputScalar($"##ulong{v.GetHashCode()}", ImGuiDataType.U64, (nint)(&edit)))
                 {
                     commandBuffer.Add(UndoCommand.Create((target: v, newValue: edit, oldValue: v.Value),
                         b => b.target.Value = b.newValue,
@@ -348,7 +353,7 @@ public class XtEditorWindow : GuiWindow
             {
                 ImGui.SetNextItemWidth(80);
                 float edit = v.Value;
-                if (ImGui.InputFloat("##float", ref edit))
+                if (ImGui.InputFloat($"##float{v.GetHashCode()}", ref edit))
                 {
                     commandBuffer.Add(UndoCommand.Create((target: v, newValue: edit, oldValue: v.Value),
                         b => b.target.Value = b.newValue,
@@ -361,7 +366,7 @@ public class XtEditorWindow : GuiWindow
             {
                 ImGui.SetNextItemWidth(80);
                 double edit = v.Value;
-                if (ImGui.InputDouble("##double", ref edit))
+                if (ImGui.InputDouble($"##double{v.GetHashCode()}", ref edit))
                 {
                     commandBuffer.Add(UndoCommand.Create((target: v, newValue: edit, oldValue: v.Value),
                         b => b.target.Value = b.newValue,
@@ -374,7 +379,7 @@ public class XtEditorWindow : GuiWindow
             {
                 ImGui.PushItemWidth(460);
                 string edit = v.Value;
-                if (ImGui.InputText("##string", ref edit, 255))
+                if (ImGui.InputText($"##string{v.GetHashCode()}", ref edit, 255))
                 {
                     commandBuffer.Add(UndoCommand.Create((target: v, newValue: edit, oldValue: v.Value),
                         b => b.target.Value = b.newValue,
@@ -388,7 +393,7 @@ public class XtEditorWindow : GuiWindow
             {
                 ImGui.PushItemWidth(460);
                 uint edit = v.Value;
-                if (ImGui.InputScalar("##locid", ImGuiDataType.U32, (nint)(&edit)))
+                if (ImGui.InputScalar($"##locid{v.GetHashCode()}", ImGuiDataType.U32, (nint)(&edit)))
                 {
                     commandBuffer.Add(UndoCommand.Create((target: v, newValue: edit, oldValue: v.Value),
                         b => b.target.Value = b.newValue,
@@ -403,7 +408,7 @@ public class XtEditorWindow : GuiWindow
                 {
                     ImGui.SetNextItemWidth(80);
                     uint edit = v.Value;
-                    if (MultiCombo("##flags", ref edit, v.Type.Labels))
+                    if (MultiCombo($"##flags{v.GetHashCode()}", ref edit, v.Type.Labels))
                     {
                         commandBuffer.Add(UndoCommand.Create((target: v, newValue: edit, oldValue: v.Value),
                             b => b.target.Value = b.newValue,
@@ -414,7 +419,7 @@ public class XtEditorWindow : GuiWindow
                 {
                     ImGui.SetNextItemWidth(80);
                     int edit = (int)v.Value;
-                    if (ImGui.Combo("##enum", ref edit, string.Join('\0', v.Type.Labels)))
+                    if (ImGui.Combo($"##enum{v.GetHashCode()}", ref edit, string.Join('\0', v.Type.Labels)))
                     {
                         commandBuffer.Add(UndoCommand.Create((target: v, newValue: (uint)edit, oldValue: v.Value),
                             b => b.target.Value = b.newValue,

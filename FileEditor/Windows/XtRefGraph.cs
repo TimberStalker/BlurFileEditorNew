@@ -1,5 +1,4 @@
-﻿using BlurFileFormats.XtFlask;
-using BlurFileFormats.XtFlask.Values;
+﻿using BlurFileFormats.FlaskReflection;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
@@ -7,7 +6,6 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using static Editor.Windows.XtRefGraph;
 
 namespace Editor.Windows;
 public class XtRefGraph : GuiWindow
@@ -17,7 +15,7 @@ public class XtRefGraph : GuiWindow
     public XtRefGraph(XtRef xtRef)
     {
         XtRef = xtRef;
-        Nodes.Add(new Node(XtRef));
+        Nodes.Add(new Node(XtRef.Value));
     }
 
     public bool Draw()
