@@ -192,7 +192,21 @@ public class XtEditorWindow : GuiWindow
             }
             if (ImGui.Button("Append"))
             {
-                a.Array.Add(a.Array.Type.BaseType.CreateValue());
+                commandBuffer.Add(UndoCommand.Create((target: a.Array, item: new XtArrayItem(a.Array, a.Array.Type.BaseType.CreateValue()), reference), b =>
+                {
+                    b.target.Values.Add(b.item);
+                    if(b.item.Type is not IXtCurryType)
+                    {
+                        b.reference.RefHeap.Add(b.item.Value);
+                    }
+                }, b =>
+                {
+                    b.target.Values.Remove(b.item); 
+                    if (b.item.Type is not IXtCurryType)
+                    {
+                        b.reference.RefHeap.Remove(b.item.Value);
+                    }
+                }));
             }
         }
     }
