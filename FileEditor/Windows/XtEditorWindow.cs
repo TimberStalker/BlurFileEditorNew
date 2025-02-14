@@ -157,6 +157,18 @@ public class XtEditorWindow : GuiWindow
                 ImGui.EndPopup();
             }
         }
+        if(item is XtArrayItem v)
+        {
+            if (ImGui.BeginPopupContextItem($"itemContext{item.GetHashCode()}"))
+            {
+                if (ImGui.MenuItem("Remove"))
+                {
+                    int index = v.Container.Values.IndexOf(v);
+                    commandBuffer.Add(UndoCommand.Create((target: v.Container, item: v, index), b => b.target.Values.RemoveAt(index), b => b.target.Values.Insert(b.index, b.item)));
+                }
+                ImGui.EndPopup();
+            }
+        }
         ImGui.SameLine(0, 10);
         ImGui.Text("=");
         DrawValue(xtDb, item.Value, reference, commandBuffer);
