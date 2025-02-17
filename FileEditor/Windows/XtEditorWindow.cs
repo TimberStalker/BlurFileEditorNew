@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Buffers;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -67,32 +68,25 @@ public class XtEditorWindow : GuiWindow
                 }
             }
             ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(5, 5));
-            var refSpan = CollectionsMarshal.AsSpan(XtDb.Refs);
-            foreach (var item in refSpan)
+
+            int size = XtDb.Refs.Count;
+            XtRefItem[] refs = ArrayPool<XtRefItem>.Shared.Rent(size);
+
+            int index = 0;
+            foreach (var (id, xtRef) in XtDb.Refs)
             {
-                if(item is XtRef xtRef)
-                {
-                    DrawXtItem(XtDb, xtRef, xtRef, commandBuffer);
-                }
-                else
-                {
-                    ImGui.TreeNodeEx($"##{item.Id}", ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap);
-                    ImGui.SameLine();
-                    uint idedit = item.Id;
-                    ImGui.SetNextItemWidth(65);
-                    if (ImGui.InputScalar("##idEdit", ImGuiDataType.U32, (nint)(&idedit)))
-                    {
-                        commandBuffer.Add(UndoCommand.Create((target: item, oldValue: item.Id, newValue: idedit), b => b.target.Id = b.newValue, b => b.target.Id = b.oldValue));
-                    }
-                    ImGui.SameLine(0, 10);
-                    ImGui.Text("=");
-                    ImGui.SameLine(0, 10);
-                    ImGui.Text(item.Type.Name);
-                    ImGui.SameLine();
-                    ImGui.Text("External Data");
-                    ImGui.TreePop();
-                }
+                refs[index++] = new XtRefItem(id, xtRef);
             }
+
+            //var refs = XtDb.Refs.Select(r => new XtRefItem(r.Key, r.Value)).ToArray();
+            for (int i = 0; i < size; i++)
+            {
+                XtRefItem item = refs[i];
+                DrawXtItem(XtDb, item, item.XtRef, commandBuffer);
+            }
+
+            ArrayPool<XtRefItem>.Shared.Return(refs);
+
             ImGui.PopStyleVar();
 
             if(commandBuffer.Count > 0)
@@ -110,20 +104,20 @@ public class XtEditorWindow : GuiWindow
         }
         return open;
     }
-    public static bool HasContent(IXtValue value) => value is XtStructValue ||
+    public static bool HasContent(XtDatabase xtDb, IXtValue value) => value is XtStructValue ||
             value is XtPointerValue p && p.Value is XtStructValue ||
-            value is XtHandleValue h && h.XtRef is XtRef r && r.Value is XtStructValue ||
+            value is XtHandleValue h && h.Handle is uint r && xtDb.Refs.TryGetValue(r, out var v) && v.Value is XtStructValue ||
             value is XtArrayValue a && a.Array is not null;
     public static bool DrawHeader(XtDatabase xtDb, IXtValueItem item, XtRef reference)
     {
         string text = item switch
         {
-            XtRef value => $"[{value.Id}]",
+            XtRefItem value => $"[{value.Id}]",
             XtFieldValueItem value => $"{value.Field.TargetType} {value.Field.Name}",
             XtArrayItem value => $"[{value.Index}]",
             _ => "Unknown"
         };
-        if(HasContent(item.Value))
+        if(HasContent(xtDb, item.Value))
         {
             return ImGui.TreeNodeEx(text, ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap);
         }
@@ -147,7 +141,7 @@ public class XtEditorWindow : GuiWindow
                             pointerValue.Value = null;
                             break;
                         case XtHandleValue handleValue:
-                            handleValue.XtRef = null;
+                            handleValue.Handle = null;
                             break;
                         case XtArrayValue arrayValue:
                             arrayValue.Array = null;
@@ -190,11 +184,11 @@ public class XtEditorWindow : GuiWindow
         {
             DrawContent(xtDb, p.Value, reference, commandBuffer);
         } 
-        else if(value is XtHandleValue h && h.XtRef is XtRef r)
+        else if(value is XtHandleValue h && h.Handle is uint r && xtDb.Refs.TryGetValue(r, out var xtRef) && xtRef.Value is XtStructValue)
         {
-
-            DrawContent(xtDb, r.Value, reference, commandBuffer);
-        } else if(value is XtArrayValue a && a.Array is not null)
+            DrawContent(xtDb, xtRef.Value, reference, commandBuffer);
+        } 
+        else if(value is XtArrayValue a && a.Array is not null)
         {
 
             var values = CollectionsMarshal.AsSpan(a.Array.Values);
@@ -462,7 +456,7 @@ public class XtEditorWindow : GuiWindow
                         foreach (var heapValue in reference.RefHeap.Where(t => t.Type == v.Type.BaseType || (t.Type is XtStructType st && v.Type.BaseType is XtStructType pt && st.IsOfType(pt))))
                         {
                             bool showContent = false;
-                            if (HasContent(heapValue))
+                            if (HasContent(xtDb, heapValue))
                             {
                                 showContent = ImGui.TreeNodeEx($"({heapValue.Type}){heapValue.GetHashCode()}", ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap);
                             }
@@ -493,7 +487,7 @@ public class XtEditorWindow : GuiWindow
             case XtHandleValue v:
 
                 ImGui.SetNextItemWidth(80);
-                if(v.XtRef is null)
+                if(v.Handle is null)
                 {
                     if (ImGui.Button("new", new Vector2(80, 0)))
                     {
@@ -507,7 +501,15 @@ public class XtEditorWindow : GuiWindow
                 }
                 else
                 {
-                    ImGui.Text($"({v.XtRef.Type})[{v.XtRef.GetHashCode()}]");
+                    if(xtDb.Refs.TryGetValue(v.Handle.Value, out var xtRef))
+                    {
+                        ImGui.Text($"({xtRef.Type})[{v.Handle}]");
+
+                    }
+                    else
+                    {
+                        ImGui.Text($"[{v.Handle}] Not Loaded");
+                    }
                 }
                 break;
             case XtArrayValue v:
@@ -567,17 +569,32 @@ public class XtEditorWindow : GuiWindow
             bool changed = false;
             foreach (var flag in flagNames)
             {
-                //bool isSet = (flags & 1 << i) > 0;
                 changed |= ImGui.CheckboxFlags(flag, ref flags, i);
-                //int x = 1;
-                //if (isSet) x = 0;
-                //flags ^= x << i;
                 i <<= 1;
             }
             ImGui.EndCombo();
             return changed;
         }
         return false;
+    }
+
+    public class XtRefItem : IXtValueItem
+    {
+        public XtRefItem(object id, XtRef xtRef)
+        {
+            Id = id;
+            XtRef = xtRef;
+        }
+
+        public IXtType Type => XtRef.Type;
+        public object Id { get; }
+        public XtRef XtRef { get; }
+        object IXtValueItem.Key => Id;
+        IXtValue IXtValueItem.Value
+        {
+            get => XtRef.Value;
+            set => XtRef.Value = value;
+        }
     }
 }
 public struct UndoCommand
